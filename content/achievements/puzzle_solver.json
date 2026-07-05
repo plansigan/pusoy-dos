@@ -1,0 +1,8 @@
+{
+  "id": "puzzle_solver",
+  "name": "Puzzle Solver",
+  "description": "Solve every puzzle.",
+  "icon": "🧩",
+  "order": 7,
+  "condition": { "type": "puzzles_solved", "value": 4 }
+}

@@ -1,0 +1,14 @@
+{
+  "id": "generic_1",
+  "display_name": "Neighbor",
+  "title": "The Tag-Along",
+  "portraits": {},
+  "theme_color": "spades",
+  "ai": { "difficulty": "medium", "personality": "neutral", "quirks": [] },
+  "emote_pool": ["🤙"],
+  "bio": "A neighbor who tagged along for a game. Quiet, but always around.",
+  "barks": {
+    "table_cleared": ["Cleared."],
+    "got_ipit": ["Ouch."]
+  }
+}

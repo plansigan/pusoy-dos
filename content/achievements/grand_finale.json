@@ -1,0 +1,9 @@
+{
+  "id": "grand_finale",
+  "name": "Grand Finale",
+  "description": "Win a game with a straight flush as your final play.",
+  "icon": "🎆",
+  "order": 8,
+  "hidden": true,
+  "condition": { "type": "event", "value": "straight_flush_finish" }
+}

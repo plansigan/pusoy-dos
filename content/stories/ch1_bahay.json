@@ -1,0 +1,61 @@
+{
+  "id": "ch1_bahay",
+  "chapter_number": 1,
+  "title": "The House",
+  "subtitle": "Lolo's Challenge",
+  "unlock": { "requires_chapter": null, "requires_rank": null },
+  "seats": {
+    "rival": "lolo_carding",
+    "seat3": { "character": "ate_marites", "role": "neutral" },
+    "seat4": { "character": "generic_1", "role": "neutral" }
+  },
+  "deal": null,
+  "scenes": {
+    "intro": [
+      { "narration": "Afternoon at Lolo Carding's house. The coffee is hot, and the hands at the table are hotter." },
+      { "speaker": "lolo_carding", "emotion": "smug", "text": "Oh, my grandchild finally shows up. You really think you can beat me?" },
+      { "speaker": "ate_marites", "emotion": "happy", "text": "Lolo, don't scare them too much! ...but yeah, you've been losing here for a while, huh. Just saying." },
+      { "speaker": "generic_1", "emotion": "neutral", "text": "I'm just the neighbor, sitting in for a game. Don't drag me into the family drama." },
+      { "speaker": "lolo_carding", "emotion": "neutral", "text": "Sit down. You're the one holding the three of clubs—" },
+      { "pause": 1.0 },
+      { "speaker": "lolo_carding", "emotion": "smug", "text": "—so you go first. It's tradition, kid." },
+      { "speaker": "ate_marites", "emotion": "smug", "text": "Wow, so much drama, like a soap opera. Come on, put your cards down already." },
+      { "speaker": "player", "text": "..." },
+      { "speaker": "lolo_carding", "emotion": "happy", "text": "Quiet. Good. A great player speaks through the cards, not the mouth." },
+      { "narration": "Lolo slowly set the house keys down beside the table." },
+      { "speaker": "lolo_carding", "emotion": "smug", "text": "Win tonight? These are yours. Lose? You're washing dishes all week." }
+    ],
+    "win": [
+      { "narration": "Last card. Nothing left in your hand." },
+      { "speaker": "lolo_carding", "emotion": "shocked", "text": "Huh?! You're out?! Wait, wait, let's count that again—" },
+      { "speaker": "ate_marites", "emotion": "happy", "text": "THEY'RE REALLY OUT! Lolo lost! This is a historic day! I'm telling the whole neighborhood!" },
+      { "speaker": "lolo_carding", "emotion": "angry", "text": "That was luck! Pure luck!" },
+      { "speaker": "lolo_carding", "emotion": "neutral", "text": "...but, good. You learned. Next time, try that skill out on the street." },
+      { "speaker": "lolo_carding", "emotion": "happy", "text": "Go on, take the keys home. It's your house too, anyway." }
+    ],
+    "lose": [
+      { "narration": "Time's up. You lost." },
+      { "speaker": "lolo_carding", "emotion": "smug", "text": "Told you so. A little more practice, kid." },
+      { "speaker": "ate_marites", "emotion": "smug", "text": "Aw, next time then. Grab that towel, we've got a lot of dishes later. Hehe." },
+      { "speaker": "lolo_carding", "emotion": "happy", "text": "Don't be sad. Sit back down. One more game?" }
+    ]
+  },
+  "match_events": [
+    {
+      "trigger": { "type": "player_cards_left", "value": 3 },
+      "once": true,
+      "lines": [
+        { "speaker": "lolo_carding", "emotion": "shocked", "text": "Wait... you only have three cards left?!" },
+        { "speaker": "lolo_carding", "emotion": "angry", "text": "That can't be. You can't beat me in my own house!" }
+      ],
+      "actions": []
+    }
+  ],
+  "on_lose": { "retry": true },
+  "rewards": {
+    "unlock_chapter": "ch2_kalsada",
+    "unlock_theme": null,
+    "unlock_card_back": null,
+    "achievement": null
+  }
+}

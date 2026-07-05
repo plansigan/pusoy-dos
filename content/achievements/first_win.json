@@ -1,0 +1,8 @@
+{
+  "id": "first_win",
+  "name": "First Blood",
+  "description": "Win your first casual or ranked game.",
+  "icon": "🏆",
+  "order": 1,
+  "condition": { "type": "total_wins", "value": 1 }
+}

@@ -1,0 +1,8 @@
+{
+  "id": "combo_master",
+  "name": "Combo Master",
+  "description": "Play 25 multi-card combos across all your games.",
+  "icon": "🎴",
+  "order": 4,
+  "condition": { "type": "combos_played", "value": 25 }
+}

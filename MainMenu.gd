@@ -1,0 +1,192 @@
+# MainMenu.gd
+extends Control
+
+func _ready() -> void:
+	# Load + validate story/character content once at boot so any bad
+	# file is reported early (it never blocks the menu).
+	ContentManager.load_all()
+	await get_tree().process_frame
+	_build_layout()
+	# Returning from a finished story chapter reopens the chapter list
+	if GameSession.return_to_story:
+		GameSession.return_to_story = false
+		StoryScreen.open(self)
+
+
+func _build_layout() -> void:
+	var sw = get_viewport_rect().size.x
+	var sh = get_viewport_rect().size.y
+
+	_add_background(sw, sh)
+	_add_corner_accents(sw, sh)
+	_add_floating_suits(sw, sh)
+	_add_title(sw, sh)
+	_add_menu_buttons(sw, sh)
+	_add_version_label(sw, sh)
+
+
+func _add_background(sw: float, sh: float) -> void:
+	var bg = ColorRect.new()
+	bg.color = ThemeManager.get_color("table_bg")
+	bg.size = Vector2(sw, sh)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(bg)
+
+
+func _add_corner_accents(sw: float, sh: float) -> void:
+	var size = 40
+	var thickness = 3
+
+	# Top-left — hearts color
+	_add_corner_line(Vector2(0, 0), Vector2(size, 0), thickness, ThemeManager.get_color("hearts"))
+	_add_corner_line(Vector2(0, 0), Vector2(0, size), thickness, ThemeManager.get_color("hearts"))
+
+	# Top-right — spades color
+	_add_corner_line(Vector2(sw - size, 0), Vector2(sw, 0), thickness, ThemeManager.get_color("spades"))
+	_add_corner_line(Vector2(sw, 0), Vector2(sw, size), thickness, ThemeManager.get_color("spades"))
+
+	# Bottom-left — diamonds color
+	_add_corner_line(Vector2(0, sh - size), Vector2(0, sh), thickness, ThemeManager.get_color("diamonds"))
+	_add_corner_line(Vector2(0, sh), Vector2(size, sh), thickness, ThemeManager.get_color("diamonds"))
+
+	# Bottom-right — clubs color
+	_add_corner_line(Vector2(sw - size, sh), Vector2(sw, sh), thickness, ThemeManager.get_color("clubs"))
+	_add_corner_line(Vector2(sw, sh - size), Vector2(sw, sh), thickness, ThemeManager.get_color("clubs"))
+
+
+func _add_corner_line(from: Vector2, to: Vector2, thickness: int, color: Color) -> void:
+	var line = Line2D.new()
+	line.add_point(from)
+	line.add_point(to)
+	line.width = thickness
+	line.default_color = color
+	add_child(line)
+
+
+func _add_floating_suits(sw: float, sh: float) -> void:
+	var suits = [
+		{"suit": Card.Suit.HEARTS, "pos": Vector2(sw * 0.12, sh * 0.15), "rot": -15},
+		{"suit": Card.Suit.SPADES, "pos": Vector2(sw * 0.82, sh * 0.18), "rot": 10},
+		{"suit": Card.Suit.CLUBS, "pos": Vector2(sw * 0.08, sh * 0.78), "rot": 20},
+		{"suit": Card.Suit.DIAMONDS, "pos": Vector2(sw * 0.85, sh * 0.75), "rot": -8},
+	]
+	for s in suits:
+		var color: Color = ThemeManager.get_suit_color(s["suit"])
+		color.a = 0.08
+		var label = UIFactory.make_label(Card.SUIT_SYMBOLS[s["suit"]], 64, color, s["pos"])
+		label.rotation_degrees = s["rot"]
+		add_child(label)
+
+
+func _add_title(sw: float, sh: float) -> void:
+	var center_x = sw / 2
+
+	var presents = UIFactory.make_label("— presents —", 12, ThemeManager.get_color("text_muted"),
+			Vector2(center_x - 60, sh * 0.18))
+	presents.size = Vector2(120, 20)
+	presents.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	add_child(presents)
+
+	for i in 2:
+		var title = UIFactory.make_label(["PUSOY", "DOS"][i], 48,
+				ThemeManager.get_color("text_primary"),
+				Vector2(center_x - 140, sh * 0.21 + i * 50))
+		title.size = Vector2(280, 60)
+		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		add_child(title)
+
+	var edition = UIFactory.make_label(
+			"[ %s EDITION ]" % ThemeManager.current_theme_name().to_upper(), 11,
+			ThemeManager.get_color("diamonds"), Vector2(center_x - 100, sh * 0.21 + 110))
+	edition.size = Vector2(200, 20)
+	edition.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	add_child(edition)
+
+
+func _add_menu_buttons(sw: float, sh: float) -> void:
+	var center_x = sw / 2
+	var btn_width = 240
+	var btn_height = 44
+	var spacing = 12
+	var start_y = sh * 0.47
+
+	var buttons_data = [
+		{"text": "▶  PLAY", "highlighted": true, "callback": _on_play_pressed},
+		{"text": "📊  STATS", "highlighted": false, "callback": _on_stats_pressed},
+		{"text": "📖  STORY", "highlighted": false, "callback": _on_story_pressed},
+		{"text": "⚙  SETTINGS", "highlighted": false, "callback": _on_settings_pressed},
+		{"text": "✕  QUIT", "highlighted": false, "callback": _on_quit_pressed},
+	]
+
+	for i in buttons_data.size():
+		var data = buttons_data[i]
+		var btn = Button.new()
+		btn.text = data["text"]
+		btn.position = Vector2(center_x - btn_width / 2, start_y + i * (btn_height + spacing))
+		btn.size = Vector2(btn_width, btn_height)
+
+		var border_color = ThemeManager.get_color("selected") if data["highlighted"] \
+				else ThemeManager.get_color("border_soft")
+		var font_color = ThemeManager.get_color("selected") if data["highlighted"] \
+				else ThemeManager.get_color("button_text")
+		UIFactory.style_button(btn, ThemeManager.get_color("button_bg"), border_color, font_color)
+		btn.add_theme_font_size_override("font_size", 14)
+
+		add_child(btn)
+		btn.pressed.connect(data["callback"])
+
+
+func _add_version_label(sw: float, sh: float) -> void:
+	var label = UIFactory.make_label("v0.1.0 — made with Godot 4", 10,
+			ThemeManager.get_color("text_muted"), Vector2(sw / 2 - 100, sh - 30))
+	label.size = Vector2(200, 20)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	add_child(label)
+
+
+# =============================================================
+# BUTTON HANDLERS
+# =============================================================
+
+func _on_play_pressed() -> void:
+	ModeSelect.open(self)
+
+
+func _on_stats_pressed() -> void:
+	StatsScreen.open(self)
+
+
+func _on_story_pressed() -> void:
+	StoryScreen.open(self)
+
+
+func _on_settings_pressed() -> void:
+	SettingsMenu.open(self, _on_settings_closed)
+
+
+func _on_settings_closed(theme_changed: bool) -> void:
+	# No game is running here, so a new suit ranking can apply right away
+	RulesManager.set_ranking(Settings.suit_ranking)
+	if theme_changed:
+		for child in get_children():
+			child.queue_free()
+		await get_tree().process_frame
+		_build_layout()
+
+
+func _on_quit_pressed() -> void:
+	get_tree().quit()
+
+
+func _show_toast(text: String) -> void:
+	var sw = get_viewport_rect().size.x
+	var sh = get_viewport_rect().size.y
+	var toast = UIFactory.make_label(text, 14, ThemeManager.get_color("status_color"),
+			Vector2(sw / 2 - 100, sh * 0.85))
+	toast.size = Vector2(200, 30)
+	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	add_child(toast)
+
+	await get_tree().create_timer(1.5).timeout
+	if is_instance_valid(toast):
+		toast.queue_free()

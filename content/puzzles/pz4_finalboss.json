@@ -1,0 +1,15 @@
+{
+  "id": "pz4_finalboss",
+  "title": "Final Boss",
+  "description": "Same hand, meaner table. Beat the sharks on Hard.",
+  "order": 4,
+  "ai": { "difficulty": "hard" },
+  "objective": { "type": "win" },
+  "unlock": { "requires_puzzle": "pz3_signature" },
+  "deal": {
+    "player": ["3C","2S","2H","2D","2C","AS","AH","AD","AC","KS","KH","KD","KC"],
+    "rival": ["QC","QD","QH","QS","JC","JD","JH","JS","10C","10D","10H","10S","9S"],
+    "seat3": ["9C","9D","9H","8C","8D","8H","8S","7C","7D","7H","7S","6S","5S"],
+    "seat4": ["6C","6D","6H","5C","5D","5H","4C","4D","4H","4S","3D","3H","3S"]
+  }
+}

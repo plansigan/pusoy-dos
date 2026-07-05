@@ -1,0 +1,8 @@
+{
+  "id": "untouchable",
+  "name": "Untouchable",
+  "description": "Win with every opponent still holding 10 or more cards.",
+  "icon": "🛡️",
+  "order": 3,
+  "condition": { "type": "flawless_wins", "value": 1 }
+}

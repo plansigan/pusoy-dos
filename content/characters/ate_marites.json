@@ -1,0 +1,46 @@
+{
+  "id": "ate_marites",
+  "display_name": "Ate Marites",
+  "title": "Queen of Gossip",
+  "portraits": {
+    "neutral": "res://art/characters/ate_marites/neutral.png",
+    "smug": "res://art/characters/ate_marites/smug.png",
+    "shocked": "res://art/characters/ate_marites/shocked.png",
+    "angry": "res://art/characters/ate_marites/angry.png",
+    "happy": "res://art/characters/ate_marites/happy.png"
+  },
+  "theme_color": "hearts",
+  "ai": { "difficulty": "medium", "personality": "chaotic", "quirks": ["talkative"] },
+  "emote_pool": ["😂", "🔥", "👏", "😎"],
+  "bio": "She knows every bit of gossip in the neighborhood. Faster than a text blast.",
+  "barks": {
+    "player_low_cards": [
+      "OOH they only have a few cards left! Did you see that?!",
+      "They're about to win, just saying!",
+      "So fast! Are they hiding a dragon in there?"
+    ],
+    "self_low_cards": [
+      "I'm almost out, don't mind me okay!",
+      "Shh, I'm close, keep it down!"
+    ],
+    "self_winning_soon": [
+      "ONE MORE! Somebody tell everyone!",
+      "This one's a win, I'm posting it in the group chat!"
+    ],
+    "got_ipit": [
+      "Ay! Why would you block me?! So mean!",
+      "Traitor! You did that on purpose!",
+      "Wait, you got me back?!"
+    ],
+    "table_cleared": [
+      "New round, new gossip!",
+      "Cleared! Who's next, hmm?",
+      "Oh, it's clear. Let's chat for a bit."
+    ],
+    "played_big_combo": [
+      "FIVE CARDS! Did you all see that?!",
+      "Combo! I really am the queen!",
+      "I'm amazing, right? Hehe."
+    ]
+  }
+}

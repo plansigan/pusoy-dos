@@ -1,0 +1,39 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="PusoyDos"
+run/main_scene="uid://cphj88oa16vah"
+config/features=PackedStringArray("4.6", "Forward Plus")
+config/icon="res://icon.svg"
+
+[autoload]
+
+Settings="*res://Settings.gd"
+ThemeManager="*uid://doojyidr3aufh"
+SoundManager="*res://SoundManager.gd"
+PixelFilter="*res://PixelFilter.gd"
+
+[display]
+
+window/stretch/mode="canvas_items"
+
+[gui]
+
+theme/default_font_antialiasing=0
+
+[physics]
+
+3d/physics_engine="Jolt Physics"
+
+[rendering]
+
+rendering_device/driver.windows="d3d12"

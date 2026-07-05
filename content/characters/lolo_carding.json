@@ -1,0 +1,42 @@
+{
+  "id": "lolo_carding",
+  "display_name": "Lolo Carding",
+  "title": "King of the Table",
+  "portraits": {
+    "neutral": "res://art/characters/lolo_carding/neutral.png",
+    "smug": "res://art/characters/lolo_carding/smug.png",
+    "shocked": "res://art/characters/lolo_carding/shocked.png",
+    "angry": "res://art/characters/lolo_carding/angry.png",
+    "happy": "res://art/characters/lolo_carding/happy.png"
+  },
+  "theme_color": "diamonds",
+  "ai": { "difficulty": "easy", "personality": "defensive", "quirks": [] },
+  "emote_pool": ["😤", "😂"],
+  "bio": "King of the Table. Never loses in his own house... until now.",
+  "barks": {
+    "player_low_cards": [
+      "Only a few cards left, but that's still a long way from winning.",
+      "Don't rush, kid. You might trip."
+    ],
+    "self_low_cards": [
+      "This is almost over. I can feel it.",
+      "Just a few more, and you're all done."
+    ],
+    "self_winning_soon": [
+      "One more! Go get the dishes ready!",
+      "This one's finished. I told you so."
+    ],
+    "got_ipit": [
+      "Hey! What was that!",
+      "You blocked me in my own house?!"
+    ],
+    "table_cleared": [
+      "New round. Start again.",
+      "Cleared. Who's next?"
+    ],
+    "played_big_combo": [
+      "Hah! That's a winning combo!",
+      "Watch closely, kid. This is how you play."
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "id": "storyteller",
+  "name": "Storyteller",
+  "description": "Complete every story chapter.",
+  "icon": "📖",
+  "order": 6,
+  "condition": { "type": "story_chapters", "value": 2 }
+}

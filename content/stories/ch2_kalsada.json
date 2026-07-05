@@ -1,0 +1,57 @@
+{
+  "id": "ch2_kalsada",
+  "chapter_number": 2,
+  "title": "The Street",
+  "subtitle": "Squeeze Marites",
+  "unlock": { "requires_chapter": "ch1_bahay", "requires_rank": null },
+  "seats": {
+    "rival": "ate_marites",
+    "seat3": { "character": "lolo_carding", "role": "ally" },
+    "seat4": { "character": "generic_1", "role": "neutral" }
+  },
+  "deal": {
+    "player": ["3C","2S","2H","2D","2C","AS","AH","AD","AC","KS","KH","KD","KC"],
+    "rival": ["QC","QD","QH","QS","JC","JD","JH","JS","10C","10D","10H","10S","9S"],
+    "seat3": ["9C","9D","9H","8C","8D","8H","8S","7C","7D","7H","7S","6S","5S"],
+    "seat4": ["6C","6D","6H","5C","5D","5H","4C","4D","4H","4S","3D","3H","3S"]
+  },
+  "scenes": {
+    "intro": [
+      { "narration": "Out on the neighborhood street. Night. A table blocks the middle of the road." },
+      { "speaker": "ate_marites", "emotion": "smug", "text": "Well, well, well! It's you! You beat Lolo, and now you feel like a winner?" },
+      { "speaker": "lolo_carding", "emotion": "neutral", "text": "Grandchild. I'm on your side now. Let's tag-team." },
+      { "speaker": "ate_marites", "emotion": "shocked", "text": "Huh?! Lolo?! You're teaming up with your own grandkid?! Traitor!" },
+      { "speaker": "lolo_carding", "emotion": "smug", "text": "That's my blood. Of course I'm on their side." },
+      { "pause": 1.0 },
+      { "speaker": "lolo_carding", "emotion": "happy", "text": "Let's box Marites in. I've got your back. Just lead with the three." },
+      { "speaker": "ate_marites", "emotion": "angry", "text": "Bring it! Two of you? I can take you both! Chat first, cards later!" }
+    ],
+    "win": [
+      { "speaker": "ate_marites", "emotion": "shocked", "text": "You beat me?! Two against one, that's not even fair!" },
+      { "speaker": "lolo_carding", "emotion": "happy", "text": "Just teamwork, dear. That's how it goes around here." },
+      { "narration": "Lolo laughed out loud. It was the first time you'd ever seen him this happy." }
+    ],
+    "lose": [
+      { "speaker": "ate_marites", "emotion": "smug", "text": "HA! Even two of you, still me! Queen of the street!" },
+      { "speaker": "lolo_carding", "emotion": "angry", "text": "That's harsh, Marites. That's my grandchild." },
+      { "speaker": "lolo_carding", "emotion": "neutral", "text": "Let's go again. Don't give up." }
+    ]
+  },
+  "match_events": [
+    {
+      "trigger": { "type": "rival_cards_left", "value": 4 },
+      "once": true,
+      "lines": [
+        { "speaker": "lolo_carding", "emotion": "smug", "text": "She's almost out, kid. Box her in now!" }
+      ],
+      "actions": [ { "set_role": { "seat": "seat4", "role": "rival2" } } ]
+    }
+  ],
+  "on_lose": { "retry": true },
+  "rewards": {
+    "unlock_chapter": null,
+    "unlock_theme": null,
+    "unlock_card_back": null,
+    "achievement": null
+  }
+}

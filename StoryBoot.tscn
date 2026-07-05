@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dd2bl20ok7iyy"]
+
+[ext_resource type="Script" path="res://StoryBoot.gd" id="1"]
+
+[node name="StoryBoot" type="Node"]
+script = ExtResource("1")
