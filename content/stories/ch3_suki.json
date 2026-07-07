@@ -1,0 +1,69 @@
+{
+  "id": "ch3_suki",
+  "chapter_number": 3,
+  "title": "Ang Suki",
+  "subtitle": "Bebot's Listahan",
+  "unlock": { "requires_chapter": "ch2_kalsada", "requires_rank": null },
+  "seats": {
+    "rival": "mang_bebot",
+    "seat3": { "character": "ate_marites", "role": "neutral" },
+    "seat4": { "character": "generic_1", "role": "neutral" }
+  },
+  "deal": null,
+  "scenes": {
+    "intro": [
+      { "narration": "High noon at the corner. Mang Bebot's sari-sari store is open — and so is his listahan." },
+      { "speaker": "mang_bebot", "emotion": "smug", "text": "Ah, ikaw pala 'yung natalo si Lolo Carding. Upo ka. Softdrink? ...may bayad 'yan, ha." },
+      { "speaker": "ate_marites", "emotion": "happy", "text": "Uy Bebot, si bata na 'to ang usap-usapan! Natalo si Lolo, tapos ako mismo—si Marites!" },
+      { "speaker": "mang_bebot", "emotion": "neutral", "text": "Alam ko. Nakasulat lahat dito. Kasama na 'yung dalawang Sprite mong hindi pa bayad, Marites." },
+      { "speaker": "ate_marites", "emotion": "shocked", "text": "HA?! Magkaibigan tayo diba?! ...anyway, alam mo ba si Kuya Rico?" },
+      { "speaker": "ate_marites", "emotion": "smug", "text": "Tatlong buwan nang walang load, nasa listahan ni Bebot—pero laro pa rin nang laro. Chika lang." },
+      { "pause": 1.0 },
+      { "speaker": "mang_bebot", "emotion": "smug", "text": "Tama si Marites. Pero ngayon, ikaw muna. Ilabas mo 'yang tres na kalburo." },
+      { "speaker": "player", "text": "..." },
+      { "speaker": "mang_bebot", "emotion": "neutral", "text": "Tahimik. Mabuti. Ang maingay, madaling basahin—tulad ng gustong mangutang." },
+      { "narration": "Mang Bebot slowly opened the worn notebook to a fresh page and clicked his pen." },
+      { "speaker": "mang_bebot", "emotion": "smug", "text": "Tandaan mo: sa mesa ko, lahat may presyo. Talo? Isusulat ko. Panalo? ...bibigyan pa kita ng dagdag na hamon." }
+    ],
+    "win": [
+      { "narration": "Your hand is empty. Bebot glanced at the listahan, then at you." },
+      { "speaker": "mang_bebot", "emotion": "shocked", "text": "Teka. Wala ka nang cards? Bilangin ko—minsan mali ang tala ko... hindi, tama nga." },
+      { "speaker": "ate_marites", "emotion": "happy", "text": "TALO SI BEBOT! I-che-check ko sa listahan—'talo si Bebot,' may petsa 'to!" },
+      { "speaker": "mang_bebot", "emotion": "neutral", "text": "Hmp. Galing mo. Pero 'wag kang masyadong tuwa." },
+      { "speaker": "mang_bebot", "emotion": "smug", "text": "Sa susunod, doble ang taya. Utang mo sa akin ang rematch—at babayaran mo 'yan." },
+      { "speaker": "mang_bebot", "emotion": "happy", "text": "Sige, iuwi mo na 'yang softdrink. Libre—ngayon lang." }
+    ],
+    "lose": [
+      { "narration": "Time is up. Bebot closed the notebook." },
+      { "speaker": "mang_bebot", "emotion": "smug", "text": "Nasa listahan ka na. Isang talo, isang softdrink na hindi bayad." },
+      { "speaker": "ate_marites", "emotion": "smug", "text": "Ay nako, sumama ka na kay Kuya Rico sa pila ng may utang. Hehe." },
+      { "speaker": "mang_bebot", "emotion": "neutral", "text": "Balik ka. Bukas ang tindahan—at bukas ang listahan." }
+    ]
+  },
+  "match_events": [
+    {
+      "trigger": { "type": "player_cards_left", "value": 3 },
+      "once": true,
+      "lines": [
+        { "speaker": "mang_bebot", "emotion": "shocked", "text": "Teka, tatlo na lang? Sandali, titingnan ko sa listahan kung pwede 'to..." },
+        { "speaker": "mang_bebot", "emotion": "angry", "text": "Hindi pwede. Walang utang na panalo sa tindahan ko!" }
+      ],
+      "actions": []
+    },
+    {
+      "trigger": { "type": "table_cleared_count", "value": 2 },
+      "once": true,
+      "lines": [
+        { "speaker": "ate_marites", "emotion": "smug", "text": "Pangalawang linis na—parang stock ni Bebot tuwing sahod, ubos agad!" }
+      ],
+      "actions": []
+    }
+  ],
+  "on_lose": { "retry": true },
+  "rewards": {
+    "unlock_chapter": "ch4_utang",
+    "unlock_theme": null,
+    "unlock_card_back": "listahan_back",
+    "achievement": "cleared_the_listahan"
+  }
+}

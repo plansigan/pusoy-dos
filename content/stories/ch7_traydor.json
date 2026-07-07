@@ -1,0 +1,67 @@
+{
+  "id": "ch7_traydor",
+  "chapter_number": 7,
+  "title": "Ang Traydor",
+  "subtitle": "Business, Walang Personalan",
+  "unlock": { "requires_chapter": "ch6_hotshot", "requires_rank": null },
+  "seats": {
+    "rival": "ka_dencio",
+    "seat3": { "character": "kuya_rico", "role": "ally" },
+    "seat4": { "character": "generic_1", "role": "neutral" }
+  },
+  "deal": null,
+  "scenes": {
+    "intro": [
+      { "narration": "Tricycle terminal, midnight. A table blocks the line of parked trikes. Ka Dencio is waiting — and so is Kuya Rico." },
+      { "speaker": "ka_dencio", "emotion": "smug", "text": "Sakay na, bata. Pero 'wag kang matakot—kakampi mo si Rico ngayon. Utang na loob daw." },
+      { "speaker": "kuya_rico", "emotion": "happy", "text": "Oo naman! Kakampi mo 'ko, promise. Free 'to—este, konting porsyento lang sa panalo." },
+      { "speaker": "ka_dencio", "emotion": "neutral", "text": "Rico. Alam mong utang ka rin sa 'kin, diba? Pang-gasolina mo last week." },
+      { "speaker": "kuya_rico", "emotion": "shocked", "text": "Ka Dencio... nandiyan ka pala. Kumusta po. Ang ganda ng trike niyo—bago 'yung side mirror?" },
+      { "speaker": "ka_dencio", "emotion": "smug", "text": "Tignan natin gaano katagal ang loyalty mo, Rico. Andar na tayo." },
+      { "pause": 1.0 },
+      { "speaker": "kuya_rico", "emotion": "neutral", "text": "Wag kang mag-alala, bata. Ako bahala sa likod mo. Solid tayo—parang bakal na trike." },
+      { "speaker": "player", "text": "..." },
+      { "narration": "Ka Dencio smiled and jingled his pocket — the clink of coins carried across the terminal." },
+      { "speaker": "ka_dencio", "emotion": "happy", "text": "O Rico, may dagdag akong pang-gasolina para sa nakakaalam kung kailan lilipat ng pila." },
+      { "speaker": "kuya_rico", "emotion": "smug", "text": "...ehe. Basta ilabas mo muna 'yang tres, bata. Nakikinig lang ako sa... sarili ko." }
+    ],
+    "win": [
+      { "narration": "Your hand is empty — even with a knife in your back." },
+      { "speaker": "ka_dencio", "emotion": "shocked", "text": "Natalo mo 'ko?! Kahit tumraydor si Rico, natalo pa rin kita?!" },
+      { "speaker": "kuya_rico", "emotion": "happy", "text": "Uy congrats, bata! ...ako ba, may kickback? Kakampi mo 'ko kanina eh." },
+      { "speaker": "ka_dencio", "emotion": "neutral", "text": "Hmp. Astig ka, bata. Sakay ka—libre, ngayon lang. Wag mong sabihin kay Rico." }
+    ],
+    "lose": [
+      { "speaker": "ka_dencio", "emotion": "smug", "text": "Andar na 'ko! Salamat, Rico—maganda ang deal natin." },
+      { "speaker": "kuya_rico", "emotion": "shocked", "text": "Sorry ha, bata! Business lang talaga 'to—i-po-post-date ko 'yung sorry ko!" },
+      { "speaker": "ka_dencio", "emotion": "happy", "text": "Balik ka. Pero next time, mag-ingat ka sa pipiliin mong kakampi." }
+    ]
+  },
+  "match_events": [
+    {
+      "trigger": { "type": "turn_number", "value": 6 },
+      "once": true,
+      "lines": [
+        { "speaker": "kuya_rico", "emotion": "smug", "text": "Alam mo bata... sorry ha. Business 'to, walang personalan." },
+        { "speaker": "ka_dencio", "emotion": "happy", "text": "Mas malaki ang alok ko, 'no Rico? Welcome sa tamang pila." },
+        { "speaker": "kuya_rico", "emotion": "happy", "text": "Wag kang magalit—i-po-post-date ko na lang 'yung pagtataksil." }
+      ],
+      "actions": [ { "set_role": { "seat": "seat3", "role": "rival2" } } ]
+    },
+    {
+      "trigger": { "type": "player_cards_left", "value": 3 },
+      "once": true,
+      "lines": [
+        { "speaker": "ka_dencio", "emotion": "shocked", "text": "Tatlo ka na lang?! Kahit dalawa na kayong kalaban, malapit ka pa rin?!" }
+      ],
+      "actions": []
+    }
+  ],
+  "on_lose": { "retry": true },
+  "rewards": {
+    "unlock_chapter": "ch8_rematch",
+    "unlock_theme": null,
+    "unlock_card_back": null,
+    "achievement": "et_tu_rico"
+  }
+}

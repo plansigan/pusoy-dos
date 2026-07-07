@@ -1,0 +1,48 @@
+{
+  "id": "kuya_rico",
+  "display_name": "Kuya Rico",
+  "title": "Ang Post-Dated",
+  "portraits": {
+    "neutral": "res://art/characters/kuya_rico/neutral.png",
+    "smug": "res://art/characters/kuya_rico/smug.png",
+    "shocked": "res://art/characters/kuya_rico/shocked.png",
+    "angry": "res://art/characters/kuya_rico/angry.png",
+    "happy": "res://art/characters/kuya_rico/happy.png"
+  },
+  "theme_color": "diamonds",
+  "ai": { "difficulty": "medium", "personality": "evasive", "quirks": ["always broke", "sideline schemes"] },
+  "emote_pool": ["😅", "💸", "🙏", "🤙"],
+  "bio": "Owes everyone in the barangay. Swears his sideline is about to hit any day now. Pays in promises.",
+  "barks": {
+    "player_low_cards": [
+      "Teka, wag ka munang manalo—may utang pa 'ko sa 'yo diba? ...wala pala.",
+      "Konti na lang cards mo? Pautang naman ng isa, bayad ko sa Linggo.",
+      "Malapit ka na—parang sweldo ko, malapit pero laging kulang."
+    ],
+    "self_low_cards": [
+      "Konti na lang sa akin, i-post-date ko na lang 'yung talo, ha.",
+      "Malapit na 'ko—tiwala lang, trust the process.",
+      "Isang card na lang, parang huling piso ko bago payday."
+    ],
+    "self_winning_soon": [
+      "Isa na lang! Cash out na 'ko!",
+      "Panalo na—may pambayad na 'ko... joke lang, wala pa rin.",
+      "Ito na 'yon! 'Yung sideline ko na sinasabi ko, sumabog!"
+    ],
+    "got_ipit": [
+      "Uy bakit ako inipit?! Hindi pa nga 'ko bayad!",
+      "Ganyan ba? Idadagdag ko 'yan sa listahan ng sama ng loob.",
+      "Aray—may collateral ba 'yang ipit na 'yan?"
+    ],
+    "table_cleared": [
+      "Clear na, parang record ko sa tindahan—wala nang natira.",
+      "Bagong bola, bagong utang.",
+      "Reset—balanse ulit... zero pa rin naman ako."
+    ],
+    "played_big_combo": [
+      "Five cards! Ito 'yung investment na pinaghirapan ko!",
+      "Combo! Sana ganito rin kabilis ang pagbayad ko.",
+      "Lima! 70-30 tayo dito ha—sa 'kin 'yung 70."
+    ]
+  }
+}

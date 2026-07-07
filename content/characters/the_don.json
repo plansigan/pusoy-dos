@@ -1,0 +1,48 @@
+{
+  "id": "the_don",
+  "display_name": "The Don",
+  "title": "Ang Hindi Natalo",
+  "portraits": {
+    "neutral": "res://art/characters/the_don/neutral.png",
+    "smug": "res://art/characters/the_don/smug.png",
+    "shocked": "res://art/characters/the_don/shocked.png",
+    "angry": "res://art/characters/the_don/angry.png",
+    "happy": "res://art/characters/the_don/happy.png"
+  },
+  "theme_color": "spades",
+  "ai": { "difficulty": "hard", "personality": "calculating", "quirks": ["legend", "1987"] },
+  "emote_pool": ["🃏", "😌", "🔥", "💀"],
+  "bio": "The legend no one has beaten since the '80s. Calm as still water, and twice as deep. He remembers 1987 — and so does Lolo Carding.",
+  "barks": {
+    "player_low_cards": [
+      "Malapit ka na. Ngunit ang malapit at ang tapos ay magkaibang mundo.",
+      "Nakikita ko ang dulo mo. Nakita ko na 'yan noon, kay Carding.",
+      "Dalawa pa lang, tatlo? Ganyan din ang simula ng bawat alamat na nabigo."
+    ],
+    "self_low_cards": [
+      "Kaunti na lang. Tulad ng buhay, umiikli nang hindi mo namamalayan.",
+      "Malapit na. Hinintay ko 'to nang mas matagal pa sa iniisip mo.",
+      "Konti na lang. Ang dalawa ng dyamante ay nasa akin—ang korona."
+    ],
+    "self_winning_soon": [
+      "Isa na lang. Tulad noong 1987.",
+      "Tapos na. Hindi ako natatalo—alam 'yan ni Carding.",
+      "Isang baraha. Tatlumpu't pitong taon, isang baraha na lang."
+    ],
+    "got_ipit": [
+      "Hmm. Matapang. Ganyan din si Carding, dati.",
+      "Inipit mo ako. Mabuti. Wala nang saya kung madali.",
+      "Isang hakbang. Ganyan nagsisimula ang mga taong naglalakas-loob."
+    ],
+    "table_cleared": [
+      "Malinis na mesa. Bagong simula—paborito kong sandali.",
+      "Wala nang natira. Ganito ang katahimikan bago ang bagyo.",
+      "Linis. Sa bawat linis, isang leksyon."
+    ],
+    "played_big_combo": [
+      "Lima. Ang bilang ng mga taon na hinintay mo 'ko—doble pa.",
+      "Combo. Ganito rin ang huling kamay ni Carding noong '87.",
+      "Limang baraha. Maganda. Ngunit ang ganda ay hindi panalo."
+    ]
+  }
+}

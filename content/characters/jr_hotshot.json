@@ -1,0 +1,48 @@
+{
+  "id": "jr_hotshot",
+  "display_name": "JR",
+  "title": "Certified Sweatlord",
+  "portraits": {
+    "neutral": "res://art/characters/jr_hotshot/neutral.png",
+    "smug": "res://art/characters/jr_hotshot/smug.png",
+    "shocked": "res://art/characters/jr_hotshot/shocked.png",
+    "angry": "res://art/characters/jr_hotshot/angry.png",
+    "happy": "res://art/characters/jr_hotshot/happy.png"
+  },
+  "theme_color": "spades",
+  "ai": { "difficulty": "medium", "personality": "cocky", "quirks": ["gamer", "streamer"] },
+  "emote_pool": ["😎", "🔥", "💀", "🎮"],
+  "bio": "The barangay's cockiest online gamer. Treats pusoy like a ranked ladder and you like a noob.",
+  "barks": {
+    "player_low_cards": [
+      "Uy low HP ka na, boss. GG soon?",
+      "Konti na lang cards mo—clutch or kick, tito.",
+      "Nasa danger zone ka na, i-stream ko 'yang comeback mo?"
+    ],
+    "self_low_cards": [
+      "One card left sa loadout ko, easy dub.",
+      "Malapit na—di ako nagla-lag, di tulad niyo.",
+      "Endgame na, meta build ko 'to eh."
+    ],
+    "self_winning_soon": [
+      "ISANG CARD! EZ Clap! GG WP!",
+      "Panalo na, i-clip niyo 'to, viral 'to.",
+      "Certified dub incoming, no cap."
+    ],
+    "got_ipit": [
+      "Anong ipit?! Report! Toxic 'yang ally niyo!",
+      "Naka-gang up kayo, unfair matchmaking 'to!",
+      "Lag 'yon, di ako natalo—rollback!"
+    ],
+    "table_cleared": [
+      "Round reset, rematch queue!",
+      "Clear na, respawn tayo.",
+      "New round, new meta—adapt or die, tito."
+    ],
+    "played_big_combo": [
+      "FIVE CARD COMBO! Meta 'yan, di niyo alam.",
+      "Combo! Certified pro play, wala kayo.",
+      "Insane mechanics, di niyo kaya i-frame perfect 'yan."
+    ]
+  }
+}

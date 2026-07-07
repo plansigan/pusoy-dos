@@ -1,0 +1,48 @@
+{
+  "id": "aling_tessie",
+  "display_name": "Aling Tessie",
+  "title": "Reyna ng Palengke",
+  "portraits": {
+    "neutral": "res://art/characters/aling_tessie/neutral.png",
+    "smug": "res://art/characters/aling_tessie/smug.png",
+    "shocked": "res://art/characters/aling_tessie/shocked.png",
+    "angry": "res://art/characters/aling_tessie/angry.png",
+    "happy": "res://art/characters/aling_tessie/happy.png"
+  },
+  "theme_color": "hearts",
+  "ai": { "difficulty": "medium", "personality": "loud", "quirks": ["haggles everything"] },
+  "emote_pool": ["🐟", "😤", "🔥", "👏"],
+  "bio": "Fish vendor at the palengke. Haggles the price of everything, including your dignity. Fixed price, walang palako.",
+  "barks": {
+    "player_low_cards": [
+      "Uy konti na lang, tumatawad ka pa ba o susuko na?",
+      "Malapit ka nang manalo—magkano, tawad pa 'yan!",
+      "Bilis mo ah, parang bentahan tuwing umaga!"
+    ],
+    "self_low_cards": [
+      "Konti na lang stock ko, huling piraso na 'to!",
+      "Malapit na 'ko, wag nang tumawad—fixed price na!",
+      "Isang card, parang huling bangus sa lababo."
+    ],
+    "self_winning_soon": [
+      "Isa na lang! Benta na benta na 'to!",
+      "Ubos na ang stock—panalo na 'ko, suki!",
+      "Isang piraso na lang, tapos sarado na 'ko!"
+    ],
+    "got_ipit": [
+      "Ay! Inipit mo ako parang timbang na dinaya!",
+      "Ganyan? Bilasa 'yang laro mo, bata!",
+      "Hoy! Walang ganyanan sa puwesto ko!"
+    ],
+    "table_cleared": [
+      "Linis! Bagong deliver, sariwa pa!",
+      "Wala nang natira, parang bangus tuwing tanghali.",
+      "Ubos ang lamesa—restock tayo, mga suki!"
+    ],
+    "played_big_combo": [
+      "Five cards! Fresh from the palengke 'yan!",
+      "Combo! Ito ang bestseller, walang tawad!",
+      "Lima! Timbang mo 'yan—sobra pa sa presyo!"
+    ]
+  }
+}

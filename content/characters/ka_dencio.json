@@ -1,0 +1,48 @@
+{
+  "id": "ka_dencio",
+  "display_name": "Ka Dencio",
+  "title": "Hari ng Ruta",
+  "portraits": {
+    "neutral": "res://art/characters/ka_dencio/neutral.png",
+    "smug": "res://art/characters/ka_dencio/smug.png",
+    "shocked": "res://art/characters/ka_dencio/shocked.png",
+    "angry": "res://art/characters/ka_dencio/angry.png",
+    "happy": "res://art/characters/ka_dencio/happy.png"
+  },
+  "theme_color": "clubs",
+  "ai": { "difficulty": "hard", "personality": "reckless", "quirks": ["tricycle driver"] },
+  "emote_pool": ["😤", "🛺", "💨", "🤙"],
+  "bio": "Tricycle driver who plays as fast as he drives—no signal, no brakes, and walang barya.",
+  "barks": {
+    "player_low_cards": [
+      "Konti na lang, malapit ka na sa hatinan—este, panalo.",
+      "Bilis mo ah, parang kabling sa kanto.",
+      "Sakay-sakay ka pa rin? Malapit ka nang bumaba, bata."
+    ],
+    "self_low_cards": [
+      "Isang sakay na lang, byahe na 'ko.",
+      "Malapit na 'ko sa terminal, wag mo 'kong pigilan.",
+      "Huling ikot na 'to, andar pa rin."
+    ],
+    "self_winning_soon": [
+      "Isa na lang! Full na, andar na 'to!",
+      "Panalo—bumaba na kayo, katapusan ng ruta.",
+      "Terminal na, wala nang balikan!"
+    ],
+    "got_ipit": [
+      "Hoy! Sinindak mo 'ko parang counterflow!",
+      "Inipit?! Traffic violation 'yan, may hulihan!",
+      "Aray—biglang preno, wala man lang senyas!"
+    ],
+    "table_cleared": [
+      "Clear ang daan, andar!",
+      "Wala nang traffic, tuloy ang pasada.",
+      "Bagong ruta, bagong pasahero."
+    ],
+    "played_big_combo": [
+      "Five cards, overloaded pero andar pa rin!",
+      "Combo! Parang singko passenger—sobra, pero kaya.",
+      "Lima! Puno ang trike, wala nang masasakay!"
+    ]
+  }
+}

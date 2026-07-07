@@ -1,0 +1,59 @@
+{
+  "id": "ch8_rematch",
+  "chapter_number": 8,
+  "title": "Ang Rematch",
+  "subtitle": "Doble ang Taya",
+  "unlock": { "requires_chapter": "ch7_traydor", "requires_rank": null },
+  "seats": {
+    "rival": "mang_bebot",
+    "seat3": { "character": "ate_marites", "role": "neutral" },
+    "seat4": { "character": "kuya_rico", "role": "neutral" }
+  },
+  "deal": null,
+  "scenes": {
+    "intro": [
+      { "narration": "The store is closed, but the light is on. On the table sits Mang Bebot's old listahan — thicker now than ever." },
+      { "speaker": "mang_bebot", "emotion": "smug", "text": "Balik ka rin. Sabi ko sa 'yo—may utang kang rematch. Ngayon, doble ang taya." },
+      { "speaker": "ate_marites", "emotion": "happy", "text": "Grabe, tumaas na ang antas! Chika ng buong barangay 'tong laban na 'to. Live 'ko mamaya." },
+      { "speaker": "kuya_rico", "emotion": "neutral", "text": "Uy, pwede ba 'kong tumaya? ...post-dated lang 'yung pusta ko ha, Bebot." },
+      { "speaker": "mang_bebot", "emotion": "angry", "text": "Hindi ka pwedeng tumaya kung utang mo pa nga 'yung upuang inuupuan mo, Rico." },
+      { "speaker": "kuya_rico", "emotion": "shocked", "text": "Fair point po." },
+      { "speaker": "mang_bebot", "emotion": "neutral", "text": "Ikaw, bata. Natalo mo 'ko dati. Suwerte 'yon. Ngayon, seryoso na 'ko." },
+      { "pause": 1.0 },
+      { "speaker": "ate_marites", "emotion": "smug", "text": "Uy Bebot, alam mo bang pinag-uusapan pa rin nila 'yung 1987 ni Lolo? Konektado raw sa The Don." },
+      { "speaker": "mang_bebot", "emotion": "smug", "text": "Isa 'yang usapan para sa susunod na mesa. Ngayon, dito ka muna—sa listahan ko." },
+      { "speaker": "player", "text": "..." },
+      { "narration": "Mang Bebot opened the listahan to a fresh page. At the top, he wrote: 'Rematch. Doble.'" }
+    ],
+    "win": [
+      { "speaker": "mang_bebot", "emotion": "shocked", "text": "Ubos na naman... dalawang beses mo na 'kong tinalo. Walang ganito sa listahan ko." },
+      { "speaker": "ate_marites", "emotion": "happy", "text": "DOBLE ANG TALO NI BEBOT! May petsa 'to! History na 'to sa barangay!" },
+      { "speaker": "mang_bebot", "emotion": "neutral", "text": "Hmp. Tama na. Handa ka na siguro sa susunod." },
+      { "speaker": "mang_bebot", "emotion": "smug", "text": "Isa na lang ang natitira sa 'yo, bata. Ang mesa na walang tumatalo. Ang Don." },
+      { "speaker": "kuya_rico", "emotion": "happy", "text": "Uy sabay tayo doon! ...pero ikaw muna mauna, baka may utang pa 'ko doon." }
+    ],
+    "lose": [
+      { "speaker": "mang_bebot", "emotion": "smug", "text": "Doble ang taya, doble ang tala. Balik ka—mahal ang leksyon dito." },
+      { "speaker": "ate_marites", "emotion": "smug", "text": "Ay, sumama ka na kay Rico. May pila na kayo ng talo. Hehe." },
+      { "speaker": "mang_bebot", "emotion": "neutral", "text": "'Wag kang susuko. Kahit ang Don, may unang talo—minsan." }
+    ]
+  },
+  "match_events": [
+    {
+      "trigger": { "type": "player_cards_left", "value": 2 },
+      "once": true,
+      "lines": [
+        { "speaker": "mang_bebot", "emotion": "shocked", "text": "Dalawa na lang?! Sandali—bilangin ko sa listahan, baka may mali..." },
+        { "speaker": "mang_bebot", "emotion": "angry", "text": "Walang mali. Grabe ka, bata." }
+      ],
+      "actions": []
+    }
+  ],
+  "on_lose": { "retry": true },
+  "rewards": {
+    "unlock_chapter": "ch9_ang_don",
+    "unlock_theme": null,
+    "unlock_card_back": "gold_listahan_back",
+    "achievement": "double_or_nothing"
+  }
+}
