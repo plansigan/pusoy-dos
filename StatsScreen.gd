@@ -183,10 +183,20 @@ func _build_history_section() -> void:
 
 
 func _build_back_button() -> void:
+	var achievements = Button.new()
+	achievements.text = "🏆 Achievements"
+	achievements.position = Vector2(PANEL_SIZE.x / 2 + 16, PANEL_SIZE.y - 66)
+	achievements.size = Vector2(184, 42)
+	achievements.add_theme_font_size_override("font_size", 13)
+	UIFactory.style_button(achievements, ThemeManager.get_color("button_bg"),
+			ThemeManager.get_color("border_soft"), ThemeManager.get_color("button_text"))
+	achievements.pressed.connect(func(): AchievementsScreen.open(get_parent()))
+	panel.add_child(achievements)
+
 	var btn = Button.new()
 	btn.text = "◀ BACK"
-	btn.position = Vector2((PANEL_SIZE.x - 150) / 2, PANEL_SIZE.y - 66)
-	btn.size = Vector2(150, 42)
+	btn.position = Vector2(PANEL_SIZE.x / 2 - 200, PANEL_SIZE.y - 66)
+	btn.size = Vector2(184, 42)
 	btn.add_theme_font_size_override("font_size", 13)
 	UIFactory.style_button(btn, ThemeManager.get_color("button_bg"),
 			ThemeManager.get_color("selected"), ThemeManager.get_color("button_text"))

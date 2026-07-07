@@ -1,0 +1,4 @@
+[gd_scene format=3 uid="uid://puzzleboot001"]
+[ext_resource type="Script" path="res://PuzzleBoot.gd" id="1"]
+[node name="PuzzleBoot" type="Node"]
+script = ExtResource("1")

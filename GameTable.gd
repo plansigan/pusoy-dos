@@ -36,6 +36,12 @@ var bark_once: Dictionary = {}       # "charid:trigger" -> true
 var event_fired: Array = []          # per match_event, once-guard
 var table_cleared_count: int = 0
 
+# --- Puzzle mode state ---
+var puzzle: Dictionary = {}
+var puzzle_solved_this_run: bool = false
+var puzzle_new_best: bool = false
+var objective_label: Label
+
 # --- UI refs ---
 var avatars: Array = []              # [AvatarSlot, AvatarSlot, AvatarSlot] for P2-P4
 var hand_fan: HandFan
@@ -85,11 +91,14 @@ func _start_game() -> void:
 	RulesManager.set_ranking(Settings.suit_ranking)
 	game_manager = GameManager.new()
 
-	# Story chapters may deal a fixed layout instead of shuffling
+	# Story chapters and puzzles deal a fixed layout instead of shuffling
 	var preset: Array = []
 	if GameSession.mode == GameSession.Mode.STORY:
 		story_chapter = ContentManager.get_chapter(GameSession.story_chapter_id)
 		preset = ContentManager.deal_to_hands(story_chapter)
+	elif GameSession.mode == GameSession.Mode.PUZZLE:
+		puzzle = ContentManager.get_puzzle(GameSession.puzzle_id)
+		preset = ContentManager.deal_to_hands(puzzle)
 	game_manager.setup_game(preset)
 	_apply_sort()
 
@@ -101,8 +110,16 @@ func _start_game() -> void:
 			ai_player.difficulty = StatsManager.ranked_difficulty()
 		GameSession.Mode.STORY:
 			_setup_story_ai()
+		GameSession.Mode.PUZZLE:
+			ai_player.difficulty = ContentManager.puzzle_ai_difficulty(puzzle)
 		_:
 			ai_player.difficulty = GameSession.casual_difficulty
+
+	puzzle_solved_this_run = false
+	puzzle_new_best = false
+	if GameSession.mode == GameSession.Mode.PUZZLE and not puzzle.is_empty():
+		objective_label.text = PuzzleManager.objective_text(puzzle.get("objective", {}))
+		objective_label.visible = true
 
 	win_screen_shown = false
 	match_recorded = false
@@ -139,6 +156,7 @@ func _build_layout() -> void:
 	_add_menu_button(sh)
 	_add_settings_button(sh)
 	_add_sort_button(sw, sh)
+	_add_objective_banner(sw)
 
 
 func _add_background(sw: float, sh: float) -> void:
@@ -369,6 +387,16 @@ func _on_hand_reordered(cards: Array) -> void:
 	hand_custom_order = true
 
 
+# Puzzle objective, shown between the avatars and the table panels
+func _add_objective_banner(sw: float) -> void:
+	objective_label = UIFactory.make_label("", 12,
+			ThemeManager.get_color("status_color"), Vector2(sw / 2 - 280, 108))
+	objective_label.size = Vector2(560, 18)
+	objective_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	objective_label.visible = false
+	add_child(objective_label)
+
+
 func _on_menu_pressed() -> void:
 	if quit_dialog != null:
 		return
@@ -405,7 +433,12 @@ func _open_quit_dialog() -> void:
 	panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	quit_dialog.add_child(panel)
 
-	var title = UIFactory.make_label("⚠ Quit ranked game?" if ranked else "Quit game?",
+	var quit_title = "Quit game?"
+	match GameSession.mode:
+		GameSession.Mode.RANKED: quit_title = "⚠ Quit ranked game?"
+		GameSession.Mode.STORY: quit_title = "Quit chapter?"
+		GameSession.Mode.PUZZLE: quit_title = "Quit puzzle?"
+	var title = UIFactory.make_label(quit_title,
 			18, ThemeManager.get_color("status_color"), Vector2(0, 22))
 	title.size = Vector2(panel.size.x, 26)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -463,6 +496,8 @@ func _confirm_quit() -> void:
 		StatsManager.record_forfeit()
 	if GameSession.mode == GameSession.Mode.STORY:
 		GameSession.return_to_story = true
+	elif GameSession.mode == GameSession.Mode.PUZZLE:
+		GameSession.return_to_puzzles = true
 	get_tree().change_scene_to_file("res://MainMenu.tscn")
 
 
@@ -823,12 +858,23 @@ func _update_avatars() -> void:
 
 
 func _update_status() -> void:
+	_update_objective_banner()
 	if game_manager.game_over:
 		status_label.visible = false
 		_show_win_screen(game_manager.winner.name)
 		return
 	var current = game_manager.get_current_player()
 	status_label.text = "Your turn!" if current.id == 0 else _display_name(current.id) + " is thinking..."
+
+
+func _update_objective_banner() -> void:
+	if GameSession.mode != GameSession.Mode.PUZZLE or puzzle.is_empty():
+		return
+	var objective = puzzle.get("objective", {})
+	var text = PuzzleManager.objective_text(objective)
+	if String(objective.get("type", "win")) == "win_in":
+		text += "  (%d used)" % human_plays
+	objective_label.text = text
 
 
 # =============================================================
@@ -1059,6 +1105,9 @@ func _show_win_screen(winner_name: String) -> void:
 	if GameSession.mode == GameSession.Mode.STORY:
 		_show_story_end()
 		return
+	if GameSession.mode == GameSession.Mode.PUZZLE:
+		_show_puzzle_end()
+		return
 	WinScreen.show(self, winner_name, Callable(self, "_on_play_again_pressed"), summary)
 
 
@@ -1070,27 +1119,40 @@ func _record_result() -> Array:
 	var human_won = game_manager.winner.id == 0
 	var flawless = human_won and _is_flawless_win()
 	var sf_finish = human_won and _finished_with_straight_flush()
+	var lines: Array = []
 
-	if GameSession.mode == GameSession.Mode.STORY:
-		StatsManager.record_story(human_won, flawless, human_plays)
-		if human_won:
-			StoryManager.complete_chapter(GameSession.story_chapter_id)
-		return []  # story shows its own end screen
+	match GameSession.mode:
+		GameSession.Mode.STORY:
+			StatsManager.record_story(human_won, flawless, human_plays)
+			if human_won:
+				StoryManager.complete_chapter(GameSession.story_chapter_id)
+			# story shows its own end screen — no summary lines
+		GameSession.Mode.PUZZLE:
+			var final_type = _play_type_name(game_manager.play_history.back()["cards"])
+			puzzle_solved_this_run = PuzzleManager.objective_met(
+					puzzle.get("objective", {}), human_won, human_plays, final_type)
+			if puzzle_solved_this_run:
+				puzzle_new_best = PuzzleManager.mark_solved(String(puzzle["id"]), human_plays)
+			StatsManager.save()  # persist global records (combos) touched mid-game
+		GameSession.Mode.RANKED:
+			if human_won:
+				var breakdown = StatsManager.record_ranked_win(flawless, sf_finish, human_plays)
+				for entry in breakdown:
+					lines.append("%+d  %s" % [entry["delta"], entry["label"]])
+			else:
+				var delta = StatsManager.record_ranked_loss()
+				lines.append("%+d  ranked loss" % delta)
+			lines.append("Rating %d · %s" % [StatsManager.rating, StatsManager.get_rank_name()])
+		_:
+			StatsManager.record_casual(human_won, flawless, human_plays)
+			lines = ["Casual match — no rating change"]
 
-	if GameSession.mode == GameSession.Mode.RANKED:
-		var lines = []
-		if human_won:
-			var breakdown = StatsManager.record_ranked_win(flawless, sf_finish, human_plays)
-			for entry in breakdown:
-				lines.append("%+d  %s" % [entry["delta"], entry["label"]])
-		else:
-			var delta = StatsManager.record_ranked_loss()
-			lines.append("%+d  ranked loss" % delta)
-		lines.append("Rating %d · %s" % [StatsManager.rating, StatsManager.get_rank_name()])
-		return lines
-
-	StatsManager.record_casual(human_won, flawless, human_plays)
-	return ["Casual match — no rating change"]
+	# Achievements check AFTER all stats/progression updates, every mode
+	var newly = AchievementManager.evaluate({
+		"straight_flush_finish": human_won and sf_finish,
+	})
+	_show_achievement_toasts(newly)
+	return lines
 
 
 # Flawless: every opponent still holds 10+ cards
@@ -1457,6 +1519,132 @@ func _retry_story() -> void:
 func _return_to_story() -> void:
 	GameSession.return_to_story = true
 	get_tree().change_scene_to_file("res://MainMenu.tscn")
+
+
+# =============================================================
+# PUZZLE MODE — end panel + achievement toasts
+# =============================================================
+
+func _show_puzzle_end() -> void:
+	var overlay = Control.new()
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	overlay.z_index = 135
+	add_child(overlay)
+	UIFactory.fill_viewport(overlay)
+
+	var dim = ColorRect.new()
+	dim.color = Color(0, 0, 0, 0.6)
+	dim.mouse_filter = Control.MOUSE_FILTER_STOP
+	overlay.add_child(dim)
+	UIFactory.fill_viewport(dim)
+
+	var panel = Panel.new()
+	panel.add_theme_stylebox_override("panel",
+			UIFactory.flat_style(ThemeManager.get_color("panel_bg"), 16))
+	panel.size = Vector2(460, 226)
+	panel.position = get_viewport_rect().size / 2 - panel.size / 2
+	overlay.add_child(panel)
+
+	var title = UIFactory.make_label(
+			"Puzzle Solved! 🧩" if puzzle_solved_this_run else "Puzzle Failed 😅", 26,
+			ThemeManager.get_color("status_color"), Vector2(0, 26))
+	title.size = Vector2(panel.size.x, 32)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	panel.add_child(title)
+
+	var detail_text: String
+	if puzzle_solved_this_run:
+		detail_text = "Cleared in %d plays" % human_plays
+		if puzzle_new_best:
+			detail_text += " — new best!"
+	elif game_manager.winner != null and game_manager.winner.id == 0:
+		detail_text = "You won the round, but missed the objective."
+	else:
+		detail_text = "You lost the round. Study the deal and try again."
+
+	var subtitle = UIFactory.make_label(String(puzzle.get("title", "")), 14,
+			ThemeManager.get_color("text_soft"), Vector2(0, 70))
+	subtitle.size = Vector2(panel.size.x, 20)
+	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	panel.add_child(subtitle)
+
+	var detail = UIFactory.make_label(detail_text, 12,
+			ThemeManager.get_color("text_muted"), Vector2(0, 96))
+	detail.size = Vector2(panel.size.x, 18)
+	detail.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	panel.add_child(detail)
+
+	if puzzle_solved_this_run:
+		var next_id = _next_puzzle_id()
+		if next_id != "":
+			_story_end_button(panel, "▸  Next Puzzle", Vector2(46, 156),
+					_start_next_puzzle.bind(next_id))
+			_story_end_button(panel, "Back", Vector2(234, 156), _return_to_puzzles)
+		else:
+			_story_end_button(panel, "Back", Vector2((panel.size.x - 160) / 2, 156),
+					_return_to_puzzles)
+	else:
+		_story_end_button(panel, "Retry", Vector2(46, 156), _on_play_again_pressed)
+		_story_end_button(panel, "Back", Vector2(234, 156), _return_to_puzzles)
+
+
+# Next puzzle in order that is unlocked (solving this one usually
+# unlocks it), or "" when this was the last one
+func _next_puzzle_id() -> String:
+	var found_current = false
+	for entry in ContentManager.puzzles_ordered:
+		if found_current and PuzzleManager.is_unlocked(String(entry["id"])):
+			return String(entry["id"])
+		if String(entry["id"]) == String(puzzle.get("id", "")):
+			found_current = true
+	return ""
+
+
+func _start_next_puzzle(next_id: String) -> void:
+	GameSession.puzzle_id = next_id
+	_on_play_again_pressed()  # rebuild + restart reads the new id
+
+
+func _return_to_puzzles() -> void:
+	GameSession.return_to_puzzles = true
+	get_tree().change_scene_to_file("res://MainMenu.tscn")
+
+
+# Slide-in toasts, top-right, one per newly unlocked achievement
+func _show_achievement_toasts(unlocked: Array) -> void:
+	for i in unlocked.size():
+		_spawn_achievement_toast(unlocked[i], i)
+
+
+func _spawn_achievement_toast(achievement: Dictionary, index: int) -> void:
+	var panel = Panel.new()
+	panel.add_theme_stylebox_override("panel", UIFactory.flat_style(
+			ThemeManager.get_color("panel_bg"), 10, 2, ThemeManager.get_color("selected")))
+	panel.size = Vector2(300, 58)
+	panel.position = Vector2(BASE_W, 88 + index * 68)  # starts offscreen right
+	panel.z_index = 110
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(panel)
+
+	var icon = UIFactory.make_label(String(achievement.get("icon", "🏆")), 24,
+			Color.WHITE, Vector2(12, 12))
+	panel.add_child(icon)
+	panel.add_child(UIFactory.make_label("Achievement unlocked!", 10,
+			ThemeManager.get_color("text_muted"), Vector2(52, 8)))
+	panel.add_child(UIFactory.make_label(String(achievement.get("name", "")), 14,
+			ThemeManager.get_color("status_color"), Vector2(52, 26)))
+
+	var tween = create_tween()
+	tween.tween_interval(0.15 + index * 0.35)
+	tween.tween_callback(func(): SoundManager.play("card_play"))
+	tween.tween_property(panel, "position:x", BASE_W - 312.0, 0.4) \
+			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_interval(2.8)
+	tween.tween_property(panel, "modulate:a", 0.0, 0.4)
+	tween.tween_callback(func():
+		if is_instance_valid(panel):
+			panel.queue_free()
+	)
 
 
 # =============================================================

@@ -35,6 +35,37 @@ static func best_for(id: String) -> int:
 	return int(best_plays.get(id, 0))
 
 
+# Pure objective evaluation — kept here (not in GameTable) so the
+# headless tests can exercise it without any autoloads.
+#   {"type":"win"}                          just win the round
+#   {"type":"win_in",   "value": N}         win using <= N plays
+#   {"type":"win_with", "value": "TYPE"}    final play is that PlayType name
+static func objective_met(objective: Dictionary, human_won: bool,
+		plays_used: int, final_play_type: String) -> bool:
+	if not human_won:
+		return false
+	var value = objective.get("value", 0)
+	match String(objective.get("type", "win")):
+		"win_in":
+			return plays_used <= int(value)
+		"win_with":
+			return final_play_type == String(value)
+		_:
+			return true
+
+
+static func objective_text(objective: Dictionary) -> String:
+	var value = objective.get("value", 0)
+	match String(objective.get("type", "win")):
+		"win_in":
+			return "Objective: win in %d plays or fewer" % int(value)
+		"win_with":
+			return "Objective: win with a %s as your final play" \
+					% String(value).replace("_", " ").to_lower()
+		_:
+			return "Objective: win the round"
+
+
 # Records a solve; keeps the fewest plays seen. Returns true if this run
 # was a new best.
 static func mark_solved(id: String, plays: int) -> bool:

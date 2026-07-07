@@ -7,10 +7,13 @@ func _ready() -> void:
 	ContentManager.load_all()
 	await get_tree().process_frame
 	_build_layout()
-	# Returning from a finished story chapter reopens the chapter list
+	# Returning from a finished story chapter / puzzle reopens that list
 	if GameSession.return_to_story:
 		GameSession.return_to_story = false
 		StoryScreen.open(self)
+	elif GameSession.return_to_puzzles:
+		GameSession.return_to_puzzles = false
+		PuzzleScreen.open(self)
 
 
 func _build_layout() -> void:
@@ -106,14 +109,15 @@ func _add_title(sw: float, sh: float) -> void:
 func _add_menu_buttons(sw: float, sh: float) -> void:
 	var center_x = sw / 2
 	var btn_width = 240
-	var btn_height = 44
-	var spacing = 12
-	var start_y = sh * 0.47
+	var btn_height = 40
+	var spacing = 10
+	var start_y = sh * 0.44
 
 	var buttons_data = [
 		{"text": "▶  PLAY", "highlighted": true, "callback": _on_play_pressed},
-		{"text": "📊  STATS", "highlighted": false, "callback": _on_stats_pressed},
 		{"text": "📖  STORY", "highlighted": false, "callback": _on_story_pressed},
+		{"text": "🧩  PUZZLES", "highlighted": false, "callback": _on_puzzles_pressed},
+		{"text": "📊  STATS", "highlighted": false, "callback": _on_stats_pressed},
 		{"text": "⚙  SETTINGS", "highlighted": false, "callback": _on_settings_pressed},
 		{"text": "✕  QUIT", "highlighted": false, "callback": _on_quit_pressed},
 	]
@@ -158,6 +162,10 @@ func _on_stats_pressed() -> void:
 
 func _on_story_pressed() -> void:
 	StoryScreen.open(self)
+
+
+func _on_puzzles_pressed() -> void:
+	PuzzleScreen.open(self)
 
 
 func _on_settings_pressed() -> void:

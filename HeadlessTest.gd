@@ -1,29 +1,34 @@
 # HeadlessTest.gd
-# Plays full AI-vs-AI games to completion without any UI, at every difficulty.
-# Run with:  godot --headless --path . --script res://HeadlessTest.gd
-extends SceneTree
+# Logic + rules tests plus AI-vs-AI games, no UI. Run as a SCENE (not
+# --script) so freshly-edited class_name scripts compile clean:
+#   godot --headless --path . res://HeadlessTest.tscn --quit-after 2000
+# (Running via --script can serve stale bytecode for edited globals.)
+extends Node
 
 const GAMES_PER_DIFFICULTY = 10
 const MAX_TURNS = 500  # safety net against infinite loops
 
-func _initialize() -> void:
+func _ready() -> void:
 	var failures = _test_suit_ranking_rules()
 	failures += _test_stats_and_rating()
 	failures += _test_story_logic()
+	failures += _test_puzzles_and_achievements()
+	var games_failed = 0
 	for difficulty in [AIPlayer.Difficulty.EASY, AIPlayer.Difficulty.MEDIUM, AIPlayer.Difficulty.HARD]:
 		for game_num in GAMES_PER_DIFFICULTY:
 			# Exercise both suit hierarchies across the batch
 			RulesManager.set_ranking(game_num % 2)
 			if not _play_one_game(game_num, difficulty):
-				failures += 1
+				games_failed += 1
 	RulesManager.set_ranking(RulesManager.SuitRanking.FILIPINO)
+	failures += games_failed
 
 	var total = GAMES_PER_DIFFICULTY * 3
 	if failures == 0:
-		print("HEADLESS TEST PASSED — %d/%d games completed with a winner" % [total, total])
+		print("HEADLESS TEST PASSED — %d/%d games completed, all logic checks OK" % [total, total])
 	else:
-		print("HEADLESS TEST FAILED — %d of %d games did not finish" % [failures, total])
-	quit(0 if failures == 0 else 1)
+		print("HEADLESS TEST FAILED — %d failing checks (%d games unfinished)" % [failures, games_failed])
+	get_tree().quit(0 if failures == 0 else 1)
 
 
 # Ranked rating rules, rank thresholds, forfeit, casual isolation,
@@ -133,6 +138,123 @@ func _test_stats_and_rating() -> int:
 	if fails == 0:
 		print("STATS & RATING RULES OK")
 	return fails
+
+
+# Puzzle content + objective checks, and data-driven achievements
+func _test_puzzles_and_achievements() -> int:
+	var fails = 0
+	# Load the script fresh: in headless runs the global class name can
+	# serve stale bytecode for a recently-edited script, but its static
+	# state is shared, so this populates what the managers read.
+	var CM = load("res://ContentManager.gd")
+	CM.reload()
+
+	if CM.puzzles.size() != 4:
+		fails += 1
+		print("FAIL puzzle: expected 4 puzzles, got %d" % CM.puzzles.size())
+	if CM.achievements.size() != 8:
+		fails += 1
+		print("FAIL ach: expected 8 achievements, got %d" % CM.achievements.size())
+
+	# Objective evaluation
+	if not PuzzleManager.objective_met({"type": "win"}, true, 5, "SINGLE"):
+		fails += 1
+		print("FAIL objective: plain win should pass")
+	if PuzzleManager.objective_met({"type": "win"}, false, 5, "SINGLE"):
+		fails += 1
+		print("FAIL objective: losing should never meet a win objective")
+	if not PuzzleManager.objective_met({"type": "win_in", "value": 8}, true, 8, "PAIR"):
+		fails += 1
+		print("FAIL objective: win in exactly par should pass")
+	if PuzzleManager.objective_met({"type": "win_in", "value": 8}, true, 9, "PAIR"):
+		fails += 1
+		print("FAIL objective: over par should fail")
+	if not PuzzleManager.objective_met({"type": "win_with", "value": "STRAIGHT_FLUSH"}, true, 5, "STRAIGHT_FLUSH"):
+		fails += 1
+		print("FAIL objective: matching final play should pass")
+	if PuzzleManager.objective_met({"type": "win_with", "value": "STRAIGHT_FLUSH"}, true, 5, "FLUSH"):
+		fails += 1
+		print("FAIL objective: wrong final play should fail")
+
+	# Puzzle progression
+	PuzzleManager.save_path = "user://puzzles_test.cfg"
+	PuzzleManager.reset_all()
+	if not PuzzleManager.is_unlocked("pz1_warmup"):
+		fails += 1
+		print("FAIL puzzle: pz1 should be unlocked fresh")
+	if PuzzleManager.is_unlocked("pz2_efficiency"):
+		fails += 1
+		print("FAIL puzzle: pz2 should be locked before pz1")
+	PuzzleManager.mark_solved("pz1_warmup", 7)
+	if not PuzzleManager.mark_solved("pz1_warmup", 5):
+		fails += 1
+		print("FAIL puzzle: 5 plays should be a new best over 7")
+	if PuzzleManager.best_for("pz1_warmup") != 5:
+		fails += 1
+		print("FAIL puzzle: best should be 5, got %d" % PuzzleManager.best_for("pz1_warmup"))
+	if not PuzzleManager.is_unlocked("pz2_efficiency"):
+		fails += 1
+		print("FAIL puzzle: pz2 should unlock after pz1 solved")
+	PuzzleManager.reload_from_disk()
+	if not PuzzleManager.is_solved("pz1_warmup"):
+		fails += 1
+		print("FAIL puzzle: solve lost across reload")
+
+	# Achievements — isolate every manager they read
+	StatsManager.save_path = "user://stats_ach_test.cfg"
+	StatsManager.reset_all()
+	StoryManager.save_path = "user://story_ach_test.cfg"
+	StoryManager.reset_all()
+	AchievementManager.save_path = "user://ach_test.cfg"
+	AchievementManager.reset_all()
+
+	if not AchievementManager.evaluate({}).is_empty():
+		fails += 1
+		print("FAIL ach: fresh profile should unlock nothing")
+	StatsManager.record_casual(true, false, 10)
+	if not _has_ach(AchievementManager.evaluate({}), "first_win"):
+		fails += 1
+		print("FAIL ach: first_win should unlock after a win")
+	if not AchievementManager.evaluate({}).is_empty():
+		fails += 1
+		print("FAIL ach: already-unlocked achievements must not re-fire")
+	if not _has_ach(AchievementManager.evaluate({"straight_flush_finish": true}), "grand_finale"):
+		fails += 1
+		print("FAIL ach: grand_finale should unlock on the SF-finish event")
+	PuzzleManager.mark_solved("pz2_efficiency", 6)
+	PuzzleManager.mark_solved("pz3_signature", 6)
+	PuzzleManager.mark_solved("pz4_finalboss", 6)
+	if not _has_ach(AchievementManager.evaluate({}), "puzzle_solver"):
+		fails += 1
+		print("FAIL ach: puzzle_solver should unlock at 4 solved")
+	AchievementManager.reload_from_disk()
+	if not AchievementManager.is_unlocked("first_win"):
+		fails += 1
+		print("FAIL ach: unlock lost across reload")
+
+	# Clean up test files and restore the real profiles
+	for path in ["user://puzzles_test.cfg", "user://stats_ach_test.cfg",
+			"user://story_ach_test.cfg", "user://ach_test.cfg"]:
+		DirAccess.remove_absolute(path)
+	PuzzleManager.save_path = "user://puzzles.cfg"
+	PuzzleManager.reload_from_disk()
+	StatsManager.save_path = "user://stats.cfg"
+	StatsManager.reload_from_disk()
+	StoryManager.save_path = "user://story.cfg"
+	StoryManager.reload_from_disk()
+	AchievementManager.save_path = "user://achievements.cfg"
+	AchievementManager.reload_from_disk()
+
+	if fails == 0:
+		print("PUZZLES & ACHIEVEMENTS OK")
+	return fails
+
+
+func _has_ach(unlocked: Array, id: String) -> bool:
+	for achievement in unlocked:
+		if String(achievement.get("id", "")) == id:
+			return true
+	return false
 
 
 # Story content, stacked deals, ally/rival2 AI roles, progression
