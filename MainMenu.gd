@@ -8,12 +8,15 @@ func _ready() -> void:
 	await get_tree().process_frame
 	_build_layout()
 	# Returning from a finished story chapter / puzzle reopens that list
+	# (only if the feature is still enabled).
 	if GameSession.return_to_story:
 		GameSession.return_to_story = false
-		StoryScreen.open(self)
+		if FeatureFlags.is_enabled("story"):
+			StoryScreen.open(self)
 	elif GameSession.return_to_puzzles:
 		GameSession.return_to_puzzles = false
-		PuzzleScreen.open(self)
+		if FeatureFlags.is_enabled("puzzles"):
+			PuzzleScreen.open(self)
 
 
 func _build_layout() -> void:
@@ -115,8 +118,8 @@ func _add_menu_buttons(sw: float, sh: float) -> void:
 
 	var buttons_data = [
 		{"text": "▶  PLAY", "highlighted": true, "callback": _on_play_pressed},
-		{"text": "📖  STORY", "highlighted": false, "callback": _on_story_pressed},
-		{"text": "🧩  PUZZLES", "highlighted": false, "callback": _on_puzzles_pressed},
+		{"text": "📖  STORY", "highlighted": false, "callback": _on_story_pressed, "feature": "story"},
+		{"text": "🧩  PUZZLES", "highlighted": false, "callback": _on_puzzles_pressed, "feature": "puzzles"},
 		{"text": "📊  STATS", "highlighted": false, "callback": _on_stats_pressed},
 		{"text": "⚙  SETTINGS", "highlighted": false, "callback": _on_settings_pressed},
 		{"text": "✕  QUIT", "highlighted": false, "callback": _on_quit_pressed},
@@ -124,6 +127,9 @@ func _add_menu_buttons(sw: float, sh: float) -> void:
 
 	for i in buttons_data.size():
 		var data = buttons_data[i]
+		var feature = String(data.get("feature", ""))
+		var locked = feature != "" and not FeatureFlags.is_enabled(feature)
+
 		var btn = Button.new()
 		btn.text = data["text"]
 		btn.position = Vector2(center_x - btn_width / 2, start_y + i * (btn_height + spacing))
@@ -135,6 +141,15 @@ func _add_menu_buttons(sw: float, sh: float) -> void:
 				else ThemeManager.get_color("button_text")
 		UIFactory.style_button(btn, ThemeManager.get_color("button_bg"), border_color, font_color)
 		btn.add_theme_font_size_override("font_size", 14)
+
+		# Locked feature: dim the button (still clickable → toast) and tag it
+		if locked:
+			btn.modulate.a = 0.5
+			var tag = UIFactory.make_label("COMING SOON", 10,
+					ThemeManager.get_color("status_color"),
+					Vector2(btn.position.x + btn_width + 12, btn.position.y + 12))
+			tag.size = Vector2(120, 16)
+			add_child(tag)
 
 		add_child(btn)
 		btn.pressed.connect(data["callback"])
@@ -161,11 +176,17 @@ func _on_stats_pressed() -> void:
 
 
 func _on_story_pressed() -> void:
-	StoryScreen.open(self)
+	if FeatureFlags.is_enabled("story"):
+		StoryScreen.open(self)
+	else:
+		_show_toast("Story Mode — coming in a free update!")
 
 
 func _on_puzzles_pressed() -> void:
-	PuzzleScreen.open(self)
+	if FeatureFlags.is_enabled("puzzles"):
+		PuzzleScreen.open(self)
+	else:
+		_show_toast("Puzzle Mode — coming in a free update!")
 
 
 func _on_settings_pressed() -> void:
@@ -190,8 +211,8 @@ func _show_toast(text: String) -> void:
 	var sw = get_viewport_rect().size.x
 	var sh = get_viewport_rect().size.y
 	var toast = UIFactory.make_label(text, 14, ThemeManager.get_color("status_color"),
-			Vector2(sw / 2 - 100, sh * 0.85))
-	toast.size = Vector2(200, 30)
+			Vector2(sw / 2 - 210, sh * 0.85))
+	toast.size = Vector2(420, 30)
 	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	add_child(toast)
 

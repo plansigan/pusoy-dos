@@ -20,8 +20,19 @@ static func open(parent: Control) -> PuzzleScreen:
 func _ready() -> void:
 	UIFactory.fill_viewport(self)
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	# Deep guard: bounce out if the feature is locked, whatever the path in.
+	if not FeatureFlags.is_enabled("puzzles"):
+		_bounce_to_menu()
+		return
 	ContentManager.load_all()
 	_build()
+
+
+func _bounce_to_menu() -> void:
+	if get_tree().current_scene == self:
+		get_tree().change_scene_to_file("res://MainMenu.tscn")
+	else:
+		queue_free()  # overlay case — reveal the menu underneath
 
 
 func _build() -> void:
