@@ -30,7 +30,7 @@ func _ready() -> void:
 
 func _bounce_to_menu() -> void:
 	if get_tree().current_scene == self:
-		get_tree().change_scene_to_file("res://MainMenu.tscn")
+		TransitionManager.change_scene("res://MainMenu.tscn")
 	else:
 		queue_free()  # overlay case — reveal the menu underneath
 
@@ -138,10 +138,10 @@ func _lock_reason(puzzle: Dictionary) -> String:
 func _start_puzzle(puzzle_id: String) -> void:
 	GameSession.mode = GameSession.Mode.PUZZLE
 	GameSession.puzzle_id = puzzle_id
-	# Capture the tree — this screen frees itself before the scene change
-	var tree = get_tree()
+	# The scene change runs on the TransitionManager autoload, so it's safe
+	# even though this overlay is freed as part of the swap.
 	queue_free()
-	tree.change_scene_to_file("res://GameTable.tscn")
+	TransitionManager.change_scene("res://GameTable.tscn")
 
 
 func _add_back_button() -> void:

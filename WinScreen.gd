@@ -4,7 +4,7 @@
 class_name WinScreen
 
 static func show(parent: Control, winner_name: String, on_play_again: Callable,
-		summary_lines: Array = []) -> void:
+		summary_lines: Array = [], rating_countup: Dictionary = {}) -> void:
 	var overlay = ColorRect.new()
 	overlay.color = Color(0, 0, 0, 0.7)
 	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -14,6 +14,8 @@ static func show(parent: Control, winner_name: String, on_play_again: Callable,
 	var panel_height = 220.0
 	if not summary_lines.is_empty():
 		panel_height += 10 + summary_lines.size() * 18
+	if not rating_countup.is_empty():
+		panel_height += 26
 
 	var panel = _make_panel(parent, panel_height)
 	overlay.add_child(panel)
@@ -27,6 +29,10 @@ static func show(parent: Control, winner_name: String, on_play_again: Callable,
 		line.size = Vector2(400, 16)
 		line.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		panel.add_child(line)
+
+	# Ranked: the new rating tallies up from the pre-match value
+	if not rating_countup.is_empty():
+		_add_rating_countup(panel, rating_countup, 124 + summary_lines.size() * 18 + 6)
 
 	var btn = Button.new()
 	btn.text = "Play Again"
@@ -45,6 +51,26 @@ static func show(parent: Control, winner_name: String, on_play_again: Callable,
 	tween.tween_property(overlay, "modulate:a", 1.0, 0.25)
 	tween.tween_property(panel, "position:y", final_y, 0.45) \
 			.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+
+static func _add_rating_countup(panel: Panel, spec: Dictionary, y: float) -> void:
+	var from_v = int(spec.get("from", 0))
+	var to_v = int(spec.get("to", from_v))
+	var rank = String(spec.get("rank", ""))
+
+	var label = UIFactory.make_label("Rating %d · %s" % [from_v, rank], 15,
+			ThemeManager.get_color("status_color"), Vector2(0, y))
+	label.size = Vector2(400, 20)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	panel.add_child(label)
+
+	# Tween is bound to the label, so it auto-cancels if the overlay is
+	# dismissed (Play Again) before the tally finishes — no dangling callback.
+	var count = label.create_tween()
+	count.tween_method(
+			func(v): label.text = "Rating %d · %s" % [roundi(v), rank],
+			float(from_v), float(to_v), 0.5) \
+			.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT).set_delay(0.35)
 
 
 static func _make_panel(parent: Control, height: float) -> Panel:

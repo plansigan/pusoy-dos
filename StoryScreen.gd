@@ -30,7 +30,7 @@ func _ready() -> void:
 
 func _bounce_to_menu() -> void:
 	if get_tree().current_scene == self:
-		get_tree().change_scene_to_file("res://MainMenu.tscn")
+		TransitionManager.change_scene("res://MainMenu.tscn")
 	else:
 		queue_free()  # overlay case — reveal the menu underneath
 
@@ -141,17 +141,16 @@ func _start_chapter(chapter_id: String) -> void:
 
 	var chapter = ContentManager.get_chapter(chapter_id)
 	var intro = chapter.get("scenes", {}).get("intro", [])
-	# Capture the tree in a local: this StoryScreen frees itself below, so
-	# the intro-done callback must NOT reach through self.get_tree().
-	var tree = get_tree()
-	var host = tree.current_scene
+	# Capture the host before freeing self; the scene change itself runs on
+	# the TransitionManager autoload, so it's safe past this node's free.
+	var host = get_tree().current_scene
 	queue_free()
 
 	if intro.is_empty():
-		tree.change_scene_to_file("res://GameTable.tscn")
+		TransitionManager.change_scene("res://GameTable.tscn")
 	else:
 		DialogueScreen.play(host, intro,
-				func(): tree.change_scene_to_file("res://GameTable.tscn"))
+				func(): TransitionManager.change_scene("res://GameTable.tscn"))
 
 
 func _add_back_button() -> void:

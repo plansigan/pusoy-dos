@@ -30,6 +30,7 @@ const TOTAL_ANGLE = 40.0        # full spread from far left to far right
 const ARC_RADIUS = 520.0        # controls how much edge cards dip
 const SELECT_POP = 30.0         # selected cards rise out of the fan
 const HOVER_POP = 10.0          # hovered card raises as a preview
+const HOVER_SCALE = 1.03        # hovered card grows slightly with the raise
 const REFLOW_TIME = 0.25
 const POP_TIME = 0.15
 const DRAG_THRESHOLD = 10.0     # below this, a press+release is a click
@@ -466,13 +467,15 @@ func _apply_hint_dimming() -> void:
 func _target_for(card_ui: CardUI, slot: Dictionary) -> Dictionary:
 	var pos: Vector2 = slot["position"]
 	var rot: float = slot["rotation"]
+	var scale := 1.0
 	if _selected.has(card_ui.card_data):
 		# Pop up and out along the card's fan angle, then straighten
 		pos += Vector2.UP.rotated(rot) * SELECT_POP
 		rot = 0.0
 	elif card_ui == _hovered:
 		pos += Vector2.UP.rotated(rot) * HOVER_POP
-	return {"position": pos, "rotation": rot}
+		scale = HOVER_SCALE
+	return {"position": pos, "rotation": rot, "scale": Vector2(scale, scale)}
 
 
 func _reflow() -> void:
@@ -512,5 +515,7 @@ func _animate_card(card_ui: CardUI, duration: float) -> void:
 	tween.tween_property(card_ui, "position", target["position"], duration) \
 			.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	tween.tween_property(card_ui, "rotation", target["rotation"], duration) \
+			.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(card_ui, "scale", target["scale"], duration) \
 			.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	_tweens[card_ui] = tween

@@ -27,7 +27,10 @@ static func style_button(btn: Button, bg: Color, border_color: Color, font_color
 	btn.add_theme_color_override("font_color", font_color)
 	btn.add_theme_color_override("font_hover_color", font_color)
 	btn.add_theme_color_override("font_pressed_color", font_color)
-	btn.pressed.connect(func(): SoundManager.play("button_click"))
+	# Global press feedback: click sound + quick scale pop (see TransitionManager)
+	btn.pressed.connect(func():
+		SoundManager.play("button_click")
+		TransitionManager.press(btn))
 
 
 # Force a Control to fill the whole viewport. Our screen roots are

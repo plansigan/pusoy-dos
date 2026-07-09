@@ -41,6 +41,7 @@ var puzzle: Dictionary = {}
 var puzzle_solved_this_run: bool = false
 var puzzle_new_best: bool = false
 var objective_label: Label
+var _win_rating_countup: Dictionary = {}  # {from,to,rank} for the WinScreen tally
 
 # --- UI refs ---
 var avatars: Array = []              # [AvatarSlot, AvatarSlot, AvatarSlot] for P2-P4
@@ -52,6 +53,7 @@ var last_play_player_label: Label
 var play_button: Button
 var pass_button: Button
 var status_label: Label
+var _status_tween: Tween        # active status-label crossfade, if any
 var menu_button: Button
 var settings_button: Button
 var sort_button: Button
@@ -124,6 +126,7 @@ func _start_game() -> void:
 	win_screen_shown = false
 	match_recorded = false
 	human_plays = 0
+	ai_chain_running = false   # defensive: GameTable is reused across Play Again
 	_connect_buttons()
 	if GameSession.mode == GameSession.Mode.STORY:
 		_apply_story_seats()
@@ -402,7 +405,7 @@ func _on_menu_pressed() -> void:
 		return
 	# Finished games can be left freely
 	if game_manager == null or game_manager.game_over or match_recorded:
-		get_tree().change_scene_to_file("res://MainMenu.tscn")
+		TransitionManager.change_scene("res://MainMenu.tscn")
 		return
 	_open_quit_dialog()
 
@@ -498,7 +501,7 @@ func _confirm_quit() -> void:
 		GameSession.return_to_story = true
 	elif GameSession.mode == GameSession.Mode.PUZZLE:
 		GameSession.return_to_puzzles = true
-	get_tree().change_scene_to_file("res://MainMenu.tscn")
+	TransitionManager.change_scene("res://MainMenu.tscn")
 
 
 func _on_settings_pressed() -> void:
@@ -560,7 +563,7 @@ func _deal_cards_animated() -> void:
 	pass_button.disabled = true
 	settings_button.disabled = true
 	sort_button.disabled = true
-	status_label.text = "Dealing..."
+	_set_status("Dealing...")
 
 	# Counters start at zero and tick up as cards arrive
 	for i in 3:
@@ -743,6 +746,25 @@ func _pulse_status() -> void:
 			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 
 
+# Swap the status text with a quick crossfade instead of an instant change.
+# Routing every status change through here keeps the alpha tween single-owner
+# (no racing fades), and it always resolves back to full opacity.
+func _set_status(text: String) -> void:
+	if not is_instance_valid(status_label):
+		return
+	if status_label.visible and status_label.text == text:
+		return
+	status_label.visible = true
+	if _status_tween != null and _status_tween.is_valid():
+		_status_tween.kill()
+	_status_tween = create_tween()
+	_status_tween.tween_property(status_label, "modulate:a", 0.0, 0.08) \
+			.set_trans(Tween.TRANS_SINE)
+	_status_tween.tween_callback(func(): status_label.text = text)
+	_status_tween.tween_property(status_label, "modulate:a", 1.0, 0.08) \
+			.set_trans(Tween.TRANS_SINE)
+
+
 func _update_pass_button() -> void:
 	# Passing is illegal on an empty table — the leader must play
 	pass_button.disabled = is_dealing or game_manager.table_cards.is_empty()
@@ -864,7 +886,7 @@ func _update_status() -> void:
 		_show_win_screen(game_manager.winner.name)
 		return
 	var current = game_manager.get_current_player()
-	status_label.text = "Your turn!" if current.id == 0 else _display_name(current.id) + " is thinking..."
+	_set_status("Your turn!" if current.id == 0 else _display_name(current.id) + " is thinking...")
 
 
 func _update_objective_banner() -> void:
@@ -886,7 +908,7 @@ func _on_play_pressed() -> void:
 		return
 	var selected = hand_fan.get_selected()
 	if selected.is_empty():
-		status_label.text = "Select cards first!"
+		_set_status("Select cards first!")
 		return
 
 	# Capture flight origins before the fan reflows
@@ -898,7 +920,7 @@ func _on_play_pressed() -> void:
 		await _commit_human_play(origins, selected)
 	else:
 		hand_fan.shake(selected)
-		status_label.text = "Invalid play — try again!"
+		_set_status("Invalid play — try again!")
 
 
 # Shared post-play flow for button, double-click, and drag-drop plays
@@ -930,7 +952,7 @@ func _on_card_double_clicked(card: Card) -> void:
 		await _commit_human_play(origins, [card])
 	else:
 		hand_fan.shake([card])
-		status_label.text = "Can't play that as a single!"
+		_set_status("Can't play that as a single!")
 
 
 # --- drag-to-play plumbing ---
@@ -965,14 +987,14 @@ func _on_play_dropped(cards: Array, global_pos: Vector2) -> void:
 	else:
 		hand_fan.return_play_drag()
 		hand_fan.shake(cards)
-		status_label.text = "Invalid play — try again!"
+		_set_status("Invalid play — try again!")
 
 
 func _on_pass_pressed() -> void:
 	if is_ai_turn or is_dealing:
 		return
 	if game_manager.table_cards.is_empty():
-		status_label.text = "Can't pass — you must play!"
+		_set_status("Can't pass — you must play!")
 		return
 	game_manager.try_pass()
 	var cleared = game_manager.table_cards.is_empty()
@@ -1013,6 +1035,8 @@ func _on_emote_pressed(emote: String, source_btn: Button) -> void:
 # =============================================================
 
 func _run_ai_turns() -> void:
+	if ai_chain_running:
+		return  # re-entrancy guard: a loop is already driving the AI
 	ai_chain_running = true
 	while not game_manager.game_over:
 		# Modal dialog open — hold the AI until it closes
@@ -1108,7 +1132,8 @@ func _show_win_screen(winner_name: String) -> void:
 	if GameSession.mode == GameSession.Mode.PUZZLE:
 		_show_puzzle_end()
 		return
-	WinScreen.show(self, winner_name, Callable(self, "_on_play_again_pressed"), summary)
+	WinScreen.show(self, winner_name, Callable(self, "_on_play_again_pressed"),
+			summary, _win_rating_countup)
 
 
 # Record the finished game exactly once; returns WinScreen summary lines
@@ -1116,6 +1141,7 @@ func _record_result() -> Array:
 	if match_recorded:
 		return []
 	match_recorded = true
+	_win_rating_countup = {}
 	var human_won = game_manager.winner.id == 0
 	var flawless = human_won and _is_flawless_win()
 	var sf_finish = human_won and _finished_with_straight_flush()
@@ -1135,6 +1161,7 @@ func _record_result() -> Array:
 				puzzle_new_best = PuzzleManager.mark_solved(String(puzzle["id"]), human_plays)
 			StatsManager.save()  # persist global records (combos) touched mid-game
 		GameSession.Mode.RANKED:
+			var old_rating = StatsManager.rating
 			if human_won:
 				var breakdown = StatsManager.record_ranked_win(flawless, sf_finish, human_plays)
 				for entry in breakdown:
@@ -1142,7 +1169,13 @@ func _record_result() -> Array:
 			else:
 				var delta = StatsManager.record_ranked_loss()
 				lines.append("%+d  ranked loss" % delta)
-			lines.append("Rating %d · %s" % [StatsManager.rating, StatsManager.get_rank_name()])
+			# The final "Rating N · Rank" line is rendered by WinScreen as an
+			# animated count-up from the pre-match value, so it's not a static line.
+			_win_rating_countup = {
+				"from": old_rating,
+				"to": StatsManager.rating,
+				"rank": StatsManager.get_rank_name(),
+			}
 		_:
 			StatsManager.record_casual(human_won, flawless, human_plays)
 			lines = ["Casual match — no rating change"]
@@ -1518,7 +1551,7 @@ func _retry_story() -> void:
 
 func _return_to_story() -> void:
 	GameSession.return_to_story = true
-	get_tree().change_scene_to_file("res://MainMenu.tscn")
+	TransitionManager.change_scene("res://MainMenu.tscn")
 
 
 # =============================================================
@@ -1607,7 +1640,7 @@ func _start_next_puzzle(next_id: String) -> void:
 
 func _return_to_puzzles() -> void:
 	GameSession.return_to_puzzles = true
-	get_tree().change_scene_to_file("res://MainMenu.tscn")
+	TransitionManager.change_scene("res://MainMenu.tscn")
 
 
 # Slide-in toasts, top-right, one per newly unlocked achievement

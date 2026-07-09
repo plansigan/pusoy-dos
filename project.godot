@@ -21,6 +21,7 @@ Settings="*res://Settings.gd"
 FeatureFlags="*res://FeatureFlags.gd"
 ThemeManager="*uid://doojyidr3aufh"
 SoundManager="*res://SoundManager.gd"
+TransitionManager="*res://TransitionManager.gd"
 PixelFilter="*res://PixelFilter.gd"
 
 [display]

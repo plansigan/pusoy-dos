@@ -185,4 +185,5 @@ func _on_back_pressed() -> void:
 
 
 func _start_game() -> void:
-	get_tree().change_scene_to_file("res://GameTable.tscn")
+	# Dip-to-dark into the table; this overlay is freed with the old scene.
+	TransitionManager.change_scene("res://GameTable.tscn")

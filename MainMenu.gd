@@ -94,12 +94,14 @@ func _add_title(sw: float, sh: float) -> void:
 	add_child(presents)
 
 	for i in 2:
+		var base_y = sh * 0.21 + i * 50
 		var title = UIFactory.make_label(["PUSOY", "DOS"][i], 48,
 				ThemeManager.get_color("text_primary"),
-				Vector2(center_x - 140, sh * 0.21 + i * 50))
+				Vector2(center_x - 140, base_y))
 		title.size = Vector2(280, 60)
 		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		add_child(title)
+		_start_title_float(title, base_y)
 
 	var edition = UIFactory.make_label(
 			"[ %s EDITION ]" % ThemeManager.current_theme_name().to_upper(), 11,
@@ -107,6 +109,19 @@ func _add_title(sw: float, sh: float) -> void:
 	edition.size = Vector2(200, 20)
 	edition.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	add_child(edition)
+
+
+# A very slow, gentle vertical drift so the title feels alive without
+# pulling the eye. Both title words share timing, so they move as one.
+# The loop starts and ends on base_y, so it repeats seamlessly.
+func _start_title_float(label: Label, base_y: float) -> void:
+	var t = label.create_tween().set_loops()
+	t.tween_property(label, "position:y", base_y - 3.0, 1.4) \
+			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	t.tween_property(label, "position:y", base_y + 3.0, 2.8) \
+			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	t.tween_property(label, "position:y", base_y, 1.4) \
+			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 
 func _add_menu_buttons(sw: float, sh: float) -> void:
@@ -142,17 +157,21 @@ func _add_menu_buttons(sw: float, sh: float) -> void:
 		UIFactory.style_button(btn, ThemeManager.get_color("button_bg"), border_color, font_color)
 		btn.add_theme_font_size_override("font_size", 14)
 
+		var delay = i * TransitionManager.STAGGER
+
 		# Locked feature: dim the button (still clickable → toast) and tag it
 		if locked:
-			btn.modulate.a = 0.5
 			var tag = UIFactory.make_label("COMING SOON", 10,
 					ThemeManager.get_color("status_color"),
 					Vector2(btn.position.x + btn_width + 12, btn.position.y + 12))
 			tag.size = Vector2(120, 16)
 			add_child(tag)
+			TransitionManager.fade_in(tag, delay, 1.0)
 
 		add_child(btn)
 		btn.pressed.connect(data["callback"])
+		# Staggered slide-up + fade as the menu opens (locked buttons rest at 0.5)
+		TransitionManager.fade_in(btn, delay, 0.5 if locked else 1.0)
 
 
 func _add_version_label(sw: float, sh: float) -> void:
