@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - "feature/**"
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Godot headless tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Whitespace check
+        run: git show --check --oneline HEAD
+
+      - name: Setup Godot 4.6.2
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.6.2
+
+      - name: Import project (catch parse/resource errors)
+        run: godot --headless --import --path . 2>&1 | tail -20
+
+      - name: Full test suite - 30 AI games + logic checks
+        run: |
+          godot --headless --path . res://HeadlessTest.tscn --quit-after 12000 > test_full.log 2>&1
+          grep "HEADLESS TEST PASSED" test_full.log
+
+      - name: Fan layout test
+        run: |
+          godot --headless --path . res://FanTest.tscn --quit-after 1200 > test_fan.log 2>&1
+          grep "FAN TEST PASSED" test_fan.log
+
+      - name: Story mode boot smoke test
+        run: |
+          godot --headless --fixed-fps 60 --path . res://StoryBoot.tscn --quit-after 900 > test_story.log 2>&1 || true
+          grep "StoryBoot: entering ch1_bahay match" test_story.log
+
+      - name: Puzzle mode boot smoke test
+        run: |
+          godot --headless --fixed-fps 60 --path . res://PuzzleBoot.tscn --quit-after 700 > test_puzzle.log 2>&1 || true
+          grep "PuzzleBoot: entering pz1_warmup match" test_puzzle.log
+
+      - name: Upload test logs (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-test-logs
+          path: "*.log"
