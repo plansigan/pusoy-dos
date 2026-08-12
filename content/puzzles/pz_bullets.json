@@ -1,0 +1,16 @@
+{
+  "id": "pz_bullets",
+  "title": "Count Your Bullets",
+  "description": "Every play is a bullet. Bundle your cards or you'll run out of turns.",
+  "order": 2,
+  "difficulty": "easy",
+  "ai": { "difficulty": "easy" },
+  "objective": { "type": "win_in", "value": 3 },
+  "unlock": { "requires_puzzle": "pz1_warmup" },
+  "deal": {
+    "player": ["3C","4C","5C","6C","7C","2C","2D","2H","2S","KD","AD","AH","AS"],
+    "rival":  ["8C","9C","10C","6D","7D","8D","3H","4H","5H","3S","4S","5S","KS"],
+    "seat3":  ["JC","QC","KC","3D","4D","5D","6H","7H","8H","9H","6S","7S","8S"],
+    "seat4":  ["AC","9D","10D","JD","QD","10H","JH","QH","KH","9S","10S","JS","QS"]
+  }
+}

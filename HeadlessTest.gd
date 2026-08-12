@@ -38,11 +38,11 @@ func _test_stats_and_rating() -> int:
 	StatsManager.save_path = "user://stats_test.cfg"
 	StatsManager.reset_all()
 
-	# Fresh profile: 0 rating → Rookie → EASY AI
-	if StatsManager.get_rank_name() != "Rookie" \
+	# Fresh profile: 0 rating → Baguhan → EASY AI
+	if StatsManager.get_rank_name() != "Baguhan" \
 			or StatsManager.ranked_difficulty() != AIPlayer.Difficulty.EASY:
 		fails += 1
-		print("FAIL stats: fresh profile should be Rookie with EASY AI")
+		print("FAIL stats: fresh profile should be Baguhan with EASY AI")
 
 	# Plain win +20, streak starts
 	StatsManager.record_ranked_win(false, false, 10)
@@ -87,20 +87,20 @@ func _test_stats_and_rating() -> int:
 
 	# Rank thresholds → AI difficulty
 	StatsManager.rating = 250
-	if StatsManager.get_rank_name() != "Street King" \
+	if StatsManager.get_rank_name() != "Kalye King" \
 			or StatsManager.ranked_difficulty() != AIPlayer.Difficulty.MEDIUM:
 		fails += 1
-		print("FAIL stats: 250 rating should be Street King / MEDIUM")
+		print("FAIL stats: 250 rating should be Kalye King / MEDIUM")
 	StatsManager.rating = 600
 	var pro_difficulty = StatsManager.ranked_difficulty()
 	if pro_difficulty != AIPlayer.Difficulty.MEDIUM and pro_difficulty != AIPlayer.Difficulty.HARD:
 		fails += 1
-		print("FAIL stats: Card Shark difficulty must be MEDIUM or HARD")
+		print("FAIL stats: Pusoy Pro difficulty must be MEDIUM or HARD")
 	StatsManager.rating = 2200
 	if StatsManager.get_rank_index() != 4 \
 			or StatsManager.ranked_difficulty() != AIPlayer.Difficulty.HARD:
 		fails += 1
-		print("FAIL stats: 2200 rating should be The Legend / HARD")
+		print("FAIL stats: 2200 rating should be Ang Alamat / HARD")
 
 	# Forfeit: -10, streak gone, history entry tagged
 	StatsManager.rating = 100
@@ -149,9 +149,9 @@ func _test_puzzles_and_achievements() -> int:
 	var CM = load("res://ContentManager.gd")
 	CM.reload()
 
-	if CM.puzzles.size() != 4:
+	if CM.puzzles.size() != 6:
 		fails += 1
-		print("FAIL puzzle: expected 4 puzzles, got %d" % CM.puzzles.size())
+		print("FAIL puzzle: expected 6 puzzles, got %d" % CM.puzzles.size())
 	if CM.achievements.size() != 8:
 		fails += 1
 		print("FAIL ach: expected 8 achievements, got %d" % CM.achievements.size())
@@ -182,9 +182,9 @@ func _test_puzzles_and_achievements() -> int:
 	if not PuzzleManager.is_unlocked("pz1_warmup"):
 		fails += 1
 		print("FAIL puzzle: pz1 should be unlocked fresh")
-	if PuzzleManager.is_unlocked("pz2_efficiency"):
+	if PuzzleManager.is_unlocked("pz_bullets"):
 		fails += 1
-		print("FAIL puzzle: pz2 should be locked before pz1")
+		print("FAIL puzzle: pz_bullets should be locked before pz1")
 	PuzzleManager.mark_solved("pz1_warmup", 7)
 	if not PuzzleManager.mark_solved("pz1_warmup", 5):
 		fails += 1
@@ -192,9 +192,9 @@ func _test_puzzles_and_achievements() -> int:
 	if PuzzleManager.best_for("pz1_warmup") != 5:
 		fails += 1
 		print("FAIL puzzle: best should be 5, got %d" % PuzzleManager.best_for("pz1_warmup"))
-	if not PuzzleManager.is_unlocked("pz2_efficiency"):
+	if not PuzzleManager.is_unlocked("pz_bullets"):
 		fails += 1
-		print("FAIL puzzle: pz2 should unlock after pz1 solved")
+		print("FAIL puzzle: pz_bullets should unlock after pz1 solved")
 	PuzzleManager.reload_from_disk()
 	if not PuzzleManager.is_solved("pz1_warmup"):
 		fails += 1
@@ -257,6 +257,13 @@ func _has_ach(unlocked: Array, id: String) -> bool:
 	return false
 
 
+func _codes_of(hand: Array) -> Array:
+	var out = []
+	for card in hand:
+		out.append(card.rank + ["C", "D", "H", "S"][card.suit])
+	return out
+
+
 # Story content, stacked deals, ally/rival2 AI roles, progression
 func _test_story_logic() -> int:
 	var fails = 0
@@ -290,6 +297,27 @@ func _test_story_logic() -> int:
 	if gm.current_player_index != 0:
 		fails += 1
 		print("FAIL story: player holding 3♣ should lead, got seat %d" % gm.current_player_index)
+
+	# Tutorial: valid 52-card guided deal; the player holds every teaching
+	# card and the rival (Lolo) holds 2♦ for the "you can't beat this" lesson
+	var tut = ContentManager.get_tutorial()
+	if tut.is_empty():
+		fails += 1
+		print("FAIL tutorial: tutorial_match not loaded")
+	else:
+		var tgm = GameManager.new()
+		tgm.setup_game(ContentManager.deal_to_hands(tut))
+		if tgm.current_player_index != 0:
+			fails += 1
+			print("FAIL tutorial: player must hold 3♣ and lead")
+		var pcodes = _codes_of(tgm.players[0].hand)
+		for need in ["3C", "2S", "4D", "4H", "6C", "7D", "8H", "9S", "10D"]:
+			if not pcodes.has(need):
+				fails += 1
+				print("FAIL tutorial: player hand missing %s" % need)
+		if not _codes_of(tgm.players[1].hand).has("2D"):
+			fails += 1
+			print("FAIL tutorial: rival (Lolo) must hold 2♦")
 
 	# ALLY must NOT beat the human's table-winning play (passing is legal)
 	var three_d = Card.new("3", Card.Suit.DIAMONDS)

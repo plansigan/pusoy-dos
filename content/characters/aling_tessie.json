@@ -1,7 +1,7 @@
 {
   "id": "aling_tessie",
   "display_name": "Aling Tessie",
-  "title": "Reyna ng Palengke",
+  "title": "Queen of the Market",
   "portraits": {
     "neutral": "res://art/characters/aling_tessie/neutral.png",
     "smug": "res://art/characters/aling_tessie/smug.png",
@@ -12,37 +12,37 @@
   "theme_color": "hearts",
   "ai": { "difficulty": "medium", "personality": "loud", "quirks": ["haggles everything"] },
   "emote_pool": ["🐟", "😤", "🔥", "👏"],
-  "bio": "Fish vendor at the palengke. Haggles the price of everything, including your dignity. Fixed price, walang palako.",
+  "bio": "Fish vendor at the market. Haggles the price of everything, including your dignity. Fixed price, no discounts.",
   "barks": {
     "player_low_cards": [
-      "Uy konti na lang, tumatawad ka pa ba o susuko na?",
-      "Malapit ka nang manalo—magkano, tawad pa 'yan!",
-      "Bilis mo ah, parang bentahan tuwing umaga!"
+      "Uy, only a few left. Still haggling, or giving up?",
+      "You're about to win. How much? That part's negotiable!",
+      "Fast, ha, like the morning rush!"
     ],
     "self_low_cards": [
-      "Konti na lang stock ko, huling piraso na 'to!",
-      "Malapit na 'ko, wag nang tumawad—fixed price na!",
-      "Isang card, parang huling bangus sa lababo."
+      "Low on stock, this is the last piece!",
+      "Almost done. No haggling, the price is fixed!",
+      "One card, like the last bangus in the sink."
     ],
     "self_winning_soon": [
-      "Isa na lang! Benta na benta na 'to!",
-      "Ubos na ang stock—panalo na 'ko, suki!",
-      "Isang piraso na lang, tapos sarado na 'ko!"
+      "Just one! This one's sold!",
+      "Out of stock, I'm winning, suki!",
+      "One piece left, then I'm closing shop!"
     ],
     "got_ipit": [
-      "Ay! Inipit mo ako parang timbang na dinaya!",
-      "Ganyan? Bilasa 'yang laro mo, bata!",
-      "Hoy! Walang ganyanan sa puwesto ko!"
+      "Ay! You blocked me like a rigged scale!",
+      "Oh, is that it? That play of yours is spoiled goods, kid!",
+      "Hoy! None of that at my stall!"
     ],
     "table_cleared": [
-      "Linis! Bagong deliver, sariwa pa!",
-      "Wala nang natira, parang bangus tuwing tanghali.",
-      "Ubos ang lamesa—restock tayo, mga suki!"
+      "Clean! Fresh delivery, still shiny!",
+      "Nothing left, like bangus by noon.",
+      "Table's empty, let's restock, suki!"
     ],
     "played_big_combo": [
-      "Five cards! Fresh from the palengke 'yan!",
-      "Combo! Ito ang bestseller, walang tawad!",
-      "Lima! Timbang mo 'yan—sobra pa sa presyo!"
+      "Five cards! Fresh from the market!",
+      "Combo! This is the bestseller, no discount!",
+      "Five! Weigh that, it's over the asking price!"
     ]
   }
 }

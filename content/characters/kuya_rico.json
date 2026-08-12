@@ -1,7 +1,7 @@
 {
   "id": "kuya_rico",
   "display_name": "Kuya Rico",
-  "title": "Ang Post-Dated",
+  "title": "The Post-Dated",
   "portraits": {
     "neutral": "res://art/characters/kuya_rico/neutral.png",
     "smug": "res://art/characters/kuya_rico/smug.png",
@@ -12,37 +12,37 @@
   "theme_color": "diamonds",
   "ai": { "difficulty": "medium", "personality": "evasive", "quirks": ["always broke", "sideline schemes"] },
   "emote_pool": ["😅", "💸", "🙏", "🤙"],
-  "bio": "Owes everyone in the barangay. Swears his sideline is about to hit any day now. Pays in promises.",
+  "bio": "Owes everyone in the barangay. Swears his sideline is about to blow up any day now. Pays in promises.",
   "barks": {
     "player_low_cards": [
-      "Teka, wag ka munang manalo—may utang pa 'ko sa 'yo diba? ...wala pala.",
-      "Konti na lang cards mo? Pautang naman ng isa, bayad ko sa Linggo.",
-      "Malapit ka na—parang sweldo ko, malapit pero laging kulang."
+      "Wait, don't win yet. I still owe you, right? ...oh, guess not.",
+      "Down to a few cards? Lend me one, I'll pay you back Sunday.",
+      "You're close. Like my paycheck, close but always short."
     ],
     "self_low_cards": [
-      "Konti na lang sa akin, i-post-date ko na lang 'yung talo, ha.",
-      "Malapit na 'ko—tiwala lang, trust the process.",
-      "Isang card na lang, parang huling piso ko bago payday."
+      "Almost out. I'll just post-date the loss, okay.",
+      "Almost there. Trust me, trust the process.",
+      "One card left, like my last peso before payday."
     ],
     "self_winning_soon": [
-      "Isa na lang! Cash out na 'ko!",
-      "Panalo na—may pambayad na 'ko... joke lang, wala pa rin.",
-      "Ito na 'yon! 'Yung sideline ko na sinasabi ko, sumabog!"
+      "Just one! Cashing out!",
+      "A win. Now I can pay you back... kidding, still broke.",
+      "This is it! That sideline I keep talking about, it hit!"
     ],
     "got_ipit": [
-      "Uy bakit ako inipit?! Hindi pa nga 'ko bayad!",
-      "Ganyan ba? Idadagdag ko 'yan sa listahan ng sama ng loob.",
-      "Aray—may collateral ba 'yang ipit na 'yan?"
+      "Uy, why block me?! I haven't even paid you yet!",
+      "Oh, like that? I'm adding that to my list of grudges.",
+      "Aray. Any collateral on that block?"
     ],
     "table_cleared": [
-      "Clear na, parang record ko sa tindahan—wala nang natira.",
-      "Bagong bola, bagong utang.",
-      "Reset—balanse ulit... zero pa rin naman ako."
+      "Cleared, like my store record. Nothing left.",
+      "New deal, new debt.",
+      "Reset. Balanced again... still zero, though."
     ],
     "played_big_combo": [
-      "Five cards! Ito 'yung investment na pinaghirapan ko!",
-      "Combo! Sana ganito rin kabilis ang pagbayad ko.",
-      "Lima! 70-30 tayo dito ha—sa 'kin 'yung 70."
+      "Five cards! This is the investment I worked so hard for!",
+      "Combo! I wish I paid people back this fast.",
+      "Five! Let's go 70-30 on this, ha. I get the 70."
     ]
   }
 }

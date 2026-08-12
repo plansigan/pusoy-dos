@@ -17,6 +17,10 @@ func _ready() -> void:
 		GameSession.return_to_puzzles = false
 		if FeatureFlags.is_enabled("puzzles"):
 			PuzzleScreen.open(self)
+	elif not Settings.tutorial_completed:
+		# First launch: offer Lolo Carding's guided match. Its own entry
+		# path — works even while Story is still feature-flagged off.
+		_show_tutorial_prompt()
 
 
 func _build_layout() -> void:
@@ -87,7 +91,7 @@ func _add_floating_suits(sw: float, sh: float) -> void:
 func _add_title(sw: float, sh: float) -> void:
 	var center_x = sw / 2
 
-	var presents = UIFactory.make_label("— presents —", 12, ThemeManager.get_color("text_muted"),
+	var presents = UIFactory.make_label("·  presents  ·", 12, ThemeManager.get_color("text_muted"),
 			Vector2(center_x - 60, sh * 0.18))
 	presents.size = Vector2(120, 20)
 	presents.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -175,7 +179,7 @@ func _add_menu_buttons(sw: float, sh: float) -> void:
 
 
 func _add_version_label(sw: float, sh: float) -> void:
-	var label = UIFactory.make_label("v0.1.0 — made with Godot 4", 10,
+	var label = UIFactory.make_label("v0.1.0  ·  made with Godot 4", 10,
 			ThemeManager.get_color("text_muted"), Vector2(sw / 2 - 100, sh - 30))
 	label.size = Vector2(200, 20)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -198,14 +202,14 @@ func _on_story_pressed() -> void:
 	if FeatureFlags.is_enabled("story"):
 		StoryScreen.open(self)
 	else:
-		_show_toast("Story Mode — coming in a free update!")
+		_show_toast("Story Mode is coming in a free update!")
 
 
 func _on_puzzles_pressed() -> void:
 	if FeatureFlags.is_enabled("puzzles"):
 		PuzzleScreen.open(self)
 	else:
-		_show_toast("Puzzle Mode — coming in a free update!")
+		_show_toast("Puzzle Mode is coming in a free update!")
 
 
 func _on_settings_pressed() -> void:
@@ -238,3 +242,80 @@ func _show_toast(text: String) -> void:
 	await get_tree().create_timer(1.5).timeout
 	if is_instance_valid(toast):
 		toast.queue_free()
+
+
+# =============================================================
+# FIRST-LAUNCH TUTORIAL PROMPT
+# =============================================================
+
+func _show_tutorial_prompt() -> void:
+	var overlay = Control.new()
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	overlay.z_index = 60
+	add_child(overlay)
+	UIFactory.fill_viewport(overlay)
+
+	var dim = ColorRect.new()
+	dim.color = Color(0, 0, 0, 0.65)
+	dim.mouse_filter = Control.MOUSE_FILTER_STOP
+	overlay.add_child(dim)
+	UIFactory.fill_viewport(dim)
+
+	var panel = Panel.new()
+	panel.add_theme_stylebox_override("panel",
+			UIFactory.flat_style(ThemeManager.get_color("panel_bg"), 16))
+	panel.size = Vector2(480, 236)
+	panel.position = get_viewport_rect().size / 2 - panel.size / 2
+	panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	overlay.add_child(panel)
+
+	var title = UIFactory.make_label("New here? 👋", 24,
+			ThemeManager.get_color("status_color"), Vector2(0, 26))
+	title.size = Vector2(panel.size.x, 30)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	panel.add_child(title)
+
+	var body = UIFactory.make_label(
+			"Lolo Carding can show you how to play Pusoy Dos.",
+			14, ThemeManager.get_color("text_soft"))
+	body.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	body.offset_left = 34
+	body.offset_top = 72
+	body.offset_right = -34
+	body.offset_bottom = -84
+	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	panel.add_child(body)
+
+	var start = Button.new()
+	start.text = "Teach me"
+	start.position = Vector2(40, 172)
+	start.size = Vector2(200, 46)
+	start.add_theme_font_size_override("font_size", 14)
+	UIFactory.style_button(start, ThemeManager.get_color("button_bg"),
+			ThemeManager.get_color("selected"), ThemeManager.get_color("button_text"))
+	start.pressed.connect(_start_tutorial)
+	panel.add_child(start)
+
+	var skip = Button.new()
+	skip.text = "I know how"
+	skip.position = Vector2(240, 172)
+	skip.size = Vector2(200, 46)
+	skip.add_theme_font_size_override("font_size", 14)
+	UIFactory.style_button(skip, ThemeManager.get_color("button_bg"),
+			ThemeManager.get_color("border_soft"), ThemeManager.get_color("button_text"))
+	skip.pressed.connect(_skip_tutorial.bind(overlay))
+	panel.add_child(skip)
+
+
+func _start_tutorial() -> void:
+	GameSession.mode = GameSession.Mode.TUTORIAL
+	TransitionManager.change_scene("res://GameTable.tscn")
+
+
+func _skip_tutorial(overlay: Control) -> void:
+	# Never auto-prompt again; the player can still replay from Settings.
+	Settings.tutorial_completed = true
+	Settings.save_settings()
+	if is_instance_valid(overlay):
+		overlay.queue_free()

@@ -4,7 +4,7 @@
 class_name WinScreen
 
 static func show(parent: Control, winner_name: String, on_play_again: Callable,
-		summary_lines: Array = [], rating_countup: Dictionary = {}) -> void:
+		on_main_menu: Callable, summary_lines: Array = [], rating_countup: Dictionary = {}) -> void:
 	var overlay = ColorRect.new()
 	overlay.color = Color(0, 0, 0, 0.7)
 	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -34,14 +34,29 @@ static func show(parent: Control, winner_name: String, on_play_again: Callable,
 	if not rating_countup.is_empty():
 		_add_rating_countup(panel, rating_countup, 124 + summary_lines.size() * 18 + 6)
 
-	var btn = Button.new()
-	btn.text = "Play Again"
-	btn.custom_minimum_size = Vector2(160, 44)
-	btn.position = Vector2(120, panel_height - 62)
-	UIFactory.style_button(btn, ThemeManager.get_color("button_bg"),
+	# Play Again stays the primary action (accent border); Main menu is the
+	# secondary escape (neutral border, like the Pass button). Both start
+	# disabled so a click during the slide-in can't fire mid-animation.
+	var button_y = panel_height - 62
+	var replay = Button.new()
+	replay.text = "Play Again"
+	replay.size = Vector2(165, 44)
+	replay.position = Vector2(28, button_y)
+	replay.disabled = true
+	UIFactory.style_button(replay, ThemeManager.get_color("button_bg"),
 			ThemeManager.get_color("selected"), ThemeManager.get_color("button_text"))
-	btn.pressed.connect(on_play_again)
-	panel.add_child(btn)
+	replay.pressed.connect(on_play_again)
+	panel.add_child(replay)
+
+	var menu = Button.new()
+	menu.text = "Main menu"
+	menu.size = Vector2(165, 44)
+	menu.position = Vector2(207, button_y)
+	menu.disabled = true
+	UIFactory.style_button(menu, ThemeManager.get_color("button_bg"),
+			ThemeManager.get_color("border_soft"), ThemeManager.get_color("button_text"))
+	menu.pressed.connect(on_main_menu)
+	panel.add_child(menu)
 
 	# Slide in from the top over a fading backdrop
 	overlay.modulate.a = 0.0
@@ -51,6 +66,14 @@ static func show(parent: Control, winner_name: String, on_play_again: Callable,
 	tween.tween_property(overlay, "modulate:a", 1.0, 0.25)
 	tween.tween_property(panel, "position:y", final_y, 0.45) \
 			.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+	# Enable the buttons once the entrance settles; focus the primary action
+	parent.get_tree().create_timer(0.3).timeout.connect(func():
+		if is_instance_valid(replay):
+			replay.disabled = false
+			replay.grab_focus()
+		if is_instance_valid(menu):
+			menu.disabled = false)
 
 
 static func _add_rating_countup(panel: Panel, spec: Dictionary, y: float) -> void:

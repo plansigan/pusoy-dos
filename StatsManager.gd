@@ -11,11 +11,11 @@ class_name StatsManager
 const HISTORY_LIMIT = 20
 
 const RANKS = [
-	{"name": "Rookie", "min": 0},
-	{"name": "Street King", "min": 200},
-	{"name": "Card Shark", "min": 500},
-	{"name": "Neighborhood Master", "min": 1000},
-	{"name": "The Legend", "min": 2000},
+	{"name": "Baguhan", "min": 0},
+	{"name": "Kalye King", "min": 200},
+	{"name": "Pusoy Pro", "min": 500},
+	{"name": "Master ng Barangay", "min": 1000},
+	{"name": "Ang Alamat", "min": 2000},
 ]
 
 const WIN_POINTS = 20
@@ -76,7 +76,7 @@ static func ranked_difficulty() -> int:
 		1:
 			return AIPlayer.Difficulty.MEDIUM
 		2:
-			# Card Shark: coin flip between medium and hard each game
+			# Pusoy Pro: coin flip between medium and hard each game
 			return AIPlayer.Difficulty.MEDIUM if randf() < 0.5 else AIPlayer.Difficulty.HARD
 		_:
 			return AIPlayer.Difficulty.HARD

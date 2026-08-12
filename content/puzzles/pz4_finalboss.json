@@ -2,7 +2,7 @@
   "id": "pz4_finalboss",
   "title": "Final Boss",
   "description": "Same hand, meaner table. Beat the sharks on Hard.",
-  "order": 4,
+  "order": 5,
   "ai": { "difficulty": "hard" },
   "objective": { "type": "win" },
   "unlock": { "requires_puzzle": "pz3_signature" },

@@ -5,7 +5,7 @@
 
 class_name GameSession
 
-enum Mode { CASUAL, RANKED, STORY, PUZZLE }
+enum Mode { CASUAL, RANKED, STORY, PUZZLE, TUTORIAL }
 
 static var mode: int = Mode.CASUAL
 static var casual_difficulty: int = AIPlayer.Difficulty.MEDIUM

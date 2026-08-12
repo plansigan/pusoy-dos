@@ -92,16 +92,18 @@ func _make_chapter_row(chapter: Dictionary) -> Control:
 	var rival = ContentManager.get_character(String(chapter["seats"]["rival"]))
 	var num = "Ch. %d" % int(chapter["chapter_number"])
 
+	# Row panel is button_bg (light/cream in the classic theme), so use the
+	# on-light token family for its text.
 	var num_label = UIFactory.make_label(num, 12,
-			ThemeManager.get_color("text_muted"), Vector2(16, 12))
+			ThemeManager.get_color("text_on_light_secondary"), Vector2(16, 12))
 	row.add_child(num_label)
 
 	var title = UIFactory.make_label(String(chapter.get("title", id)), 20,
-			ThemeManager.get_color("text_primary"), Vector2(16, 28))
+			ThemeManager.get_color("text_on_light_primary"), Vector2(16, 28))
 	row.add_child(title)
 
 	var subtitle = UIFactory.make_label(String(chapter.get("subtitle", "")), 12,
-			ThemeManager.get_color("text_soft"), Vector2(16, 58))
+			ThemeManager.get_color("text_on_light_secondary"), Vector2(16, 58))
 	row.add_child(subtitle)
 
 	var rival_label = UIFactory.make_label("vs %s" % String(rival.get("display_name", "?")), 13,
@@ -112,7 +114,7 @@ func _make_chapter_row(chapter: Dictionary) -> Control:
 
 	if not unlocked:
 		var lock = UIFactory.make_label("🔒 %s" % StoryManager.lock_reason(id), 12,
-				ThemeManager.get_color("text_muted"), Vector2(PANEL_SIZE.x - 320, 60))
+				ThemeManager.get_color("text_on_light_secondary"), Vector2(PANEL_SIZE.x - 320, 60))
 		lock.size = Vector2(230, 18)
 		lock.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		row.add_child(lock)

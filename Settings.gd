@@ -14,6 +14,7 @@ var pixel_level: int = 1  # 0 off, 1 light, 2 medium, 3 heavy
 var show_hints: bool = true
 var sort_mode: String = "rank"  # "rank" or "suit"
 var suit_ranking: int = RulesManager.SuitRanking.FILIPINO
+var tutorial_completed: bool = false  # first-launch guided match seen/skipped
 
 func _ready() -> void:
 	load_settings()
@@ -32,6 +33,7 @@ func load_settings() -> void:
 	show_hints = cfg.get_value("gameplay", "show_hints", show_hints)
 	sort_mode = cfg.get_value("gameplay", "sort_mode", sort_mode)
 	suit_ranking = cfg.get_value("rules", "suit_ranking", suit_ranking)
+	tutorial_completed = cfg.get_value("gameplay", "tutorial_completed", tutorial_completed)
 
 
 func save_settings() -> void:
@@ -43,5 +45,6 @@ func save_settings() -> void:
 	cfg.set_value("audio", "volume", volume)
 	cfg.set_value("gameplay", "show_hints", show_hints)
 	cfg.set_value("gameplay", "sort_mode", sort_mode)
+	cfg.set_value("gameplay", "tutorial_completed", tutorial_completed)
 	cfg.set_value("rules", "suit_ranking", suit_ranking)
 	cfg.save(PATH)

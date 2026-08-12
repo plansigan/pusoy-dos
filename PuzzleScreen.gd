@@ -92,19 +92,20 @@ func _make_puzzle_row(puzzle: Dictionary) -> Control:
 			ThemeManager.get_color("button_bg"), 8, 2, border))
 	row.modulate.a = 1.0 if unlocked else 0.5
 
+	# Row panel is button_bg (light/cream in the classic theme) → on-light text
 	row.add_child(UIFactory.make_label("Puzzle %d" % int(puzzle["order"]), 12,
-			ThemeManager.get_color("text_muted"), Vector2(16, 10)))
+			ThemeManager.get_color("text_on_light_secondary"), Vector2(16, 10)))
 	row.add_child(UIFactory.make_label(String(puzzle.get("title", id)), 20,
-			ThemeManager.get_color("text_primary"), Vector2(16, 26)))
+			ThemeManager.get_color("text_on_light_primary"), Vector2(16, 26)))
 	row.add_child(UIFactory.make_label(String(puzzle.get("description", "")), 12,
-			ThemeManager.get_color("text_soft"), Vector2(16, 56)))
+			ThemeManager.get_color("text_on_light_secondary"), Vector2(16, 56)))
 	row.add_child(UIFactory.make_label(
 			PuzzleManager.objective_text(puzzle.get("objective", {})), 11,
-			ThemeManager.get_color("text_muted"), Vector2(16, 74)))
+			ThemeManager.get_color("text_on_light_secondary"), Vector2(16, 74)))
 
 	if not unlocked:
 		var lock = UIFactory.make_label("🔒 %s" % _lock_reason(puzzle), 12,
-				ThemeManager.get_color("text_muted"), Vector2(PANEL_SIZE.x - 320, 40))
+				ThemeManager.get_color("text_on_light_secondary"), Vector2(PANEL_SIZE.x - 320, 40))
 		lock.size = Vector2(226, 18)
 		lock.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		row.add_child(lock)

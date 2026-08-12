@@ -1,0 +1,15 @@
+{
+  "id": "tutorial_match",
+  "title": "Lolo Carding's Lesson",
+  "seats": {
+    "rival": "lolo_carding",
+    "seat3": { "character": "generic_1", "role": "neutral" },
+    "seat4": { "character": "generic_1", "role": "neutral" }
+  },
+  "deal": {
+    "player": ["3C", "4D", "4H", "5D", "5H", "5S", "6C", "7D", "8H", "9S", "10D", "KC", "2S"],
+    "rival":  ["2D", "3D", "6D", "8D", "9D", "JD", "QD", "KD", "AD", "4C", "5C", "7C", "8C"],
+    "seat3":  ["9C", "10C", "JC", "QC", "AC", "2C", "3H", "6H", "7H", "9H", "10H", "JH", "QH"],
+    "seat4":  ["KH", "AH", "2H", "3S", "4S", "6S", "7S", "8S", "10S", "JS", "QS", "KS", "AS"]
+  }
+}

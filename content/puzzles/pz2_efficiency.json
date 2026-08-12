@@ -1,11 +1,11 @@
 {
   "id": "pz2_efficiency",
-  "title": "Efficiency Expert",
-  "description": "You have the cards. Win in 8 plays or fewer.",
-  "order": 2,
+  "title": "The Wrong Flush",
+  "description": "You hold two straight flushes. One of them is a lie. Win in 8.",
+  "order": 6,
   "ai": { "difficulty": "medium" },
   "objective": { "type": "win_in", "value": 8 },
-  "unlock": { "requires_puzzle": "pz1_warmup" },
+  "unlock": { "requires_puzzle": "pz4_finalboss" },
   "deal": {
     "player": ["3C","4C","5C","6C","7C","2S","2H","AS","AH","KS","KH","QS","JS"],
     "rival": ["8C","8D","8H","8S","9C","9D","9H","9S","10C","10D","10H","10S","JC"],

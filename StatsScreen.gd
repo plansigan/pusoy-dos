@@ -108,7 +108,7 @@ func _build_ranked_section() -> void:
 	panel.add_child(progress_label)
 
 	var losses = StatsManager.ranked_games - StatsManager.ranked_wins
-	_line("W %d — L %d  ·  win rate %s  ·  current streak %d" %
+	_line("W %d  ·  L %d  ·  win rate %s  ·  current streak %d" %
 			[StatsManager.ranked_wins, losses,
 			_percent(StatsManager.ranked_wins, StatsManager.ranked_games),
 			StatsManager.streak],
@@ -126,7 +126,7 @@ func _build_casual_section() -> void:
 			_percent(StatsManager.casual_wins, StatsManager.casual_games)],
 			198, ThemeManager.get_color("text_soft"))
 
-	var fastest = "—" if StatsManager.fastest_win_turns == 0 \
+	var fastest = "n/a" if StatsManager.fastest_win_turns == 0 \
 			else "%d plays" % StatsManager.fastest_win_turns
 	_line("combos played %d  ·  flawless wins %d  ·  fastest win %s" %
 			[StatsManager.combos_played, StatsManager.flawless_wins, fastest],
@@ -151,7 +151,7 @@ func _build_history_section() -> void:
 	scroll.add_child(list)
 
 	if StatsManager.match_history.is_empty():
-		list.add_child(UIFactory.make_label("no matches yet — go play!", 12,
+		list.add_child(UIFactory.make_label("no matches yet, go play!", 12,
 				ThemeManager.get_color("text_muted")))
 		return
 
@@ -175,7 +175,7 @@ func _build_history_section() -> void:
 		row.add_child(result_label)
 
 		var delta: int = entry["rating_delta"]
-		var delta_text = "—" if entry["mode"] == "casual" else "%+d rating" % delta
+		var delta_text = "-" if entry["mode"] == "casual" else "%+d rating" % delta
 		row.add_child(UIFactory.make_label(delta_text, 12,
 				ThemeManager.get_color("text_soft")))
 
@@ -205,4 +205,4 @@ func _build_back_button() -> void:
 
 
 func _percent(wins: int, games: int) -> String:
-	return "—" if games == 0 else "%d%%" % roundi(100.0 * wins / games)
+	return "n/a" if games == 0 else "%d%%" % roundi(100.0 * wins / games)

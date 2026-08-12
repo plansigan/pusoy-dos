@@ -1,7 +1,7 @@
 {
   "id": "ch4_utang",
   "chapter_number": 4,
-  "title": "Ang Utang",
+  "title": "The Debt",
   "subtitle": "Post-Dated Promises",
   "unlock": { "requires_chapter": "ch3_suki", "requires_rank": null },
   "seats": {
@@ -12,31 +12,31 @@
   "deal": null,
   "scenes": {
     "intro": [
-      { "narration": "Night at the waiting shed. Kuya Rico is waiting — not for a jeep, but for his luck to turn." },
-      { "speaker": "kuya_rico", "emotion": "smug", "text": "Uy, ikaw 'yung bagong salta! Astig. Pautang ka nga ng pang-taya, bayad ko sa Linggo—promise." },
-      { "speaker": "mang_bebot", "emotion": "neutral", "text": "Rico. Tatlong buwan nang 'sa Linggo.' Nandito ako para maningil." },
-      { "speaker": "kuya_rico", "emotion": "shocked", "text": "Mang Bebot?! Bakit ka nandito—este, kumusta po! Ang kapal na ng listahan niyo ngayon ah!" },
-      { "speaker": "mang_bebot", "emotion": "smug", "text": "Kaya nga. Manalo ka muna sa bata, baka may pambayad ka na." },
-      { "speaker": "kuya_rico", "emotion": "happy", "text": "Ay game! Kita mo, opportunity 'to. Investment lang, kuya. Trust the process." },
+      { "narration": "Night at the waiting shed. Kuya Rico sits there, hoping his luck finally turns." },
+      { "speaker": "kuya_rico", "emotion": "smug", "text": "Uy, you're the new arrival! Cool. Lend me some betting money, I'll pay you Sunday, promise." },
+      { "speaker": "mang_bebot", "emotion": "neutral", "text": "Rico. It's been 'this Sunday' for three months now. I came here to collect." },
+      { "speaker": "kuya_rico", "emotion": "shocked", "text": "Mang Bebot?! Why are you here, I mean, hello po! Your ledger's gotten thick, ha!" },
+      { "speaker": "mang_bebot", "emotion": "smug", "text": "Exactly. Beat the kid first, then maybe you'll have something to pay with." },
+      { "speaker": "kuya_rico", "emotion": "happy", "text": "Ay, game! See, this is an opportunity. Just an investment, kuya. Trust the process." },
       { "pause": 1.0 },
-      { "speaker": "kuya_rico", "emotion": "neutral", "text": "O sige, ikaw na mag-una—may tres kang kalburo diba? Lucky ka. Ako, wala—kahit pera." },
+      { "speaker": "kuya_rico", "emotion": "neutral", "text": "Alright, you lead. You've got the three of clubs, right? Lucky you. Me, I've got nothing. Not even cash." },
       { "speaker": "player", "text": "..." },
-      { "speaker": "kuya_rico", "emotion": "smug", "text": "Tahimik ka, gusto ko 'yan. Parang collector—walang sinasabi, basta kinukuha." },
+      { "speaker": "kuya_rico", "emotion": "smug", "text": "You're quiet, I like that. Just like a collector. Says nothing, just takes." },
       { "narration": "Rico patted his pocket. Empty. He smiled anyway." },
-      { "speaker": "kuya_rico", "emotion": "happy", "text": "Relax lang tayo. Kahit matalo 'ko, i-po-post-date ko lang naman 'yun, diba Bebot?" }
+      { "speaker": "kuya_rico", "emotion": "happy", "text": "Let's just relax. Even if I lose, I'll only post-date it, right Bebot?" }
     ],
     "win": [
       { "narration": "Your hand is empty. Rico looked at the money he did not have." },
-      { "speaker": "kuya_rico", "emotion": "shocked", "text": "Talo 'ko?! Teka, hindi pa 'to final—may replay ba? Refund?" },
-      { "speaker": "mang_bebot", "emotion": "smug", "text": "Wala. Isusulat ko na lang 'to sa listahan mo, Rico. Dagdag." },
-      { "speaker": "kuya_rico", "emotion": "angry", "text": "Grabe naman 'to! ...sige na nga. Pero investment 'to ha, babawi 'ko next quarter." },
-      { "speaker": "kuya_rico", "emotion": "happy", "text": "Astig ka pala, bata. Sideline tayo minsan—50-50... 70-30... sa 'kin 'yung 70." }
+      { "speaker": "kuya_rico", "emotion": "shocked", "text": "I lost?! Wait, this isn't final, right? Is there a replay? A refund?" },
+      { "speaker": "mang_bebot", "emotion": "smug", "text": "None. I'll just write this into your ledger, Rico. Add it on." },
+      { "speaker": "kuya_rico", "emotion": "angry", "text": "Oh, come on! ...fine. But this is an investment, ha. I'll win it back next quarter." },
+      { "speaker": "kuya_rico", "emotion": "happy", "text": "You're pretty good, kid. Let's run a sideline sometime. 50-50... 70-30... I get the 70." }
     ],
     "lose": [
       { "narration": "Time is up. Rico grinned like he won a lotto he never actually joined." },
-      { "speaker": "kuya_rico", "emotion": "smug", "text": "Yes! Panalo! ...ibig sabihin, may pambayad na 'ko, Bebot?" },
-      { "speaker": "mang_bebot", "emotion": "neutral", "text": "Hindi. Sa 'kin 'yang panalo mo. Bayad sa utang. Nakasulat." },
-      { "speaker": "kuya_rico", "emotion": "shocked", "text": "HA?! Ganon? ...sige, next time bata, babawi ka rin—kung may pautang ka." }
+      { "speaker": "kuya_rico", "emotion": "smug", "text": "Yes! I won! ...which means I can finally pay you back, Bebot?" },
+      { "speaker": "mang_bebot", "emotion": "neutral", "text": "No. That win is mine. Payment on your debt. Already written down." },
+      { "speaker": "kuya_rico", "emotion": "shocked", "text": "HA?! Like that? ...okay, next time you'll win it back too, kid. If you spot me a loan." }
     ]
   },
   "match_events": [
@@ -44,8 +44,8 @@
       "trigger": { "type": "rival_cards_left", "value": 3 },
       "once": true,
       "lines": [
-        { "speaker": "kuya_rico", "emotion": "smug", "text": "Teka, tatlo na lang 'ko—pwede bang i-installment na lang 'yung natitira?" },
-        { "speaker": "mang_bebot", "emotion": "angry", "text": "Hindi installment ang pusoy, Rico!" }
+        { "speaker": "kuya_rico", "emotion": "smug", "text": "Wait, I'm down to three. Can I just pay the rest in installments?" },
+        { "speaker": "mang_bebot", "emotion": "angry", "text": "Pusoy is not an installment plan, Rico!" }
       ],
       "actions": []
     }

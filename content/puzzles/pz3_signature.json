@@ -2,10 +2,10 @@
   "id": "pz3_signature",
   "title": "Signature Finish",
   "description": "Empty your hand on a straight flush. Style points required.",
-  "order": 3,
+  "order": 4,
   "ai": { "difficulty": "medium" },
   "objective": { "type": "win_with", "value": "STRAIGHT_FLUSH" },
-  "unlock": { "requires_puzzle": "pz2_efficiency" },
+  "unlock": { "requires_puzzle": "pz_2trap" },
   "deal": {
     "player": ["3C","2S","2H","2D","AS","AH","AD","KC","4H","5H","6H","7H","8H"],
     "rival": ["QC","QD","QH","QS","JC","JD","JH","JS","10C","10D","10H","10S","9S"],

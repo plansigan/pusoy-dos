@@ -21,6 +21,7 @@ signal play_drag_started
 signal play_drag_moved(global_pos)
 signal play_drag_ended
 signal play_dropped(cards, global_pos)
+signal illegal_card_tapped          # a locked-out card was pressed (tutorial)
 
 const CARD_SIZE = Vector2(72, 95)
 const MAX_SPACING = 56.0        # loosest the fan gets with few cards
@@ -48,6 +49,11 @@ var _selected: Dictionary = {}  # Card -> true
 var _hints: Dictionary = {}     # Card -> true = playable; empty = no dimming
 var _hovered: CardUI = null
 var _tweens: Dictionary = {}    # CardUI -> its active Tween
+
+# Tutorial lock: when active, only cards in the filter can be hovered,
+# selected, or dragged. Everything else reports illegal_card_tapped.
+var _filter_active: bool = false
+var _selectable_filter: Dictionary = {}   # Card -> true
 
 var _drag_mode := DragMode.NONE
 var _press_card: CardUI = null
@@ -134,6 +140,20 @@ func clear_selection() -> void:
 		card_ui.set_selected(false)
 	_reflow()
 	_apply_hint_dimming()
+
+
+# Tutorial lock: restrict interaction to exactly these Card instances.
+# Pass an empty array to lock the hand entirely (nothing selectable).
+func set_selectable(cards: Array) -> void:
+	_filter_active = true
+	_selectable_filter.clear()
+	for card in cards:
+		_selectable_filter[card] = true
+
+
+func clear_selectable() -> void:
+	_filter_active = false
+	_selectable_filter.clear()
 
 
 func set_input_enabled(value: bool) -> void:
@@ -225,6 +245,11 @@ func _input(event: InputEvent) -> void:
 func _handle_press(event: InputEvent) -> void:
 	var hit = _hit_card(event.position)
 	if hit == null:
+		return
+	# Tutorial lock: a card that isn't part of this step can't be grabbed.
+	if _filter_active and not _selectable_filter.has(hit.card_data):
+		get_viewport().set_input_as_handled()
+		illegal_card_tapped.emit()
 		return
 	get_viewport().set_input_as_handled()
 	_press_card = hit
@@ -396,7 +421,11 @@ func _hand_bounds() -> Rect2:
 
 
 func _update_hover(global_point: Vector2) -> void:
-	_set_hover(_hit_card(global_point))
+	var hit = _hit_card(global_point)
+	# Locked-out cards don't preview-raise, reinforcing which are playable
+	if hit != null and _filter_active and not _selectable_filter.has(hit.card_data):
+		hit = null
+	_set_hover(hit)
 
 
 func _set_hover(card_ui: CardUI) -> void:

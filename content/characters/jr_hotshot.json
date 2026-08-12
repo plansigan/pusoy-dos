@@ -12,37 +12,37 @@
   "theme_color": "spades",
   "ai": { "difficulty": "medium", "personality": "cocky", "quirks": ["gamer", "streamer"] },
   "emote_pool": ["😎", "🔥", "💀", "🎮"],
-  "bio": "The barangay's cockiest online gamer. Treats pusoy like a ranked ladder and you like a noob.",
+  "bio": "The barangay's cockiest online gamer. Treats pusoy like a ranked ladder, and treats you like a noob.",
   "barks": {
     "player_low_cards": [
-      "Uy low HP ka na, boss. GG soon?",
-      "Konti na lang cards mo—clutch or kick, tito.",
-      "Nasa danger zone ka na, i-stream ko 'yang comeback mo?"
+      "Uy, low HP na, boss. GG soon?",
+      "Down to a few cards. Clutch or get kicked, tito.",
+      "You're in the danger zone. Want me to stream your comeback?"
     ],
     "self_low_cards": [
-      "One card left sa loadout ko, easy dub.",
-      "Malapit na—di ako nagla-lag, di tulad niyo.",
-      "Endgame na, meta build ko 'to eh."
+      "One card left in my loadout. Easy dub.",
+      "Almost there. I don't lag like you guys.",
+      "Endgame na. This is the meta build."
     ],
     "self_winning_soon": [
-      "ISANG CARD! EZ Clap! GG WP!",
-      "Panalo na, i-clip niyo 'to, viral 'to.",
+      "ONE CARD! EZ Clap! GG WP!",
+      "I'm winning, clip this, it's going viral.",
       "Certified dub incoming, no cap."
     ],
     "got_ipit": [
-      "Anong ipit?! Report! Toxic 'yang ally niyo!",
-      "Naka-gang up kayo, unfair matchmaking 'to!",
-      "Lag 'yon, di ako natalo—rollback!"
+      "What block?! Report! Your ally is toxic!",
+      "You ganged up on me, this matchmaking is unfair!",
+      "That was lag, I didn't lose. Rollback!"
     ],
     "table_cleared": [
       "Round reset, rematch queue!",
-      "Clear na, respawn tayo.",
-      "New round, new meta—adapt or die, tito."
+      "Cleared, respawn time.",
+      "New round, new meta. Adapt or die, tito."
     ],
     "played_big_combo": [
-      "FIVE CARD COMBO! Meta 'yan, di niyo alam.",
-      "Combo! Certified pro play, wala kayo.",
-      "Insane mechanics, di niyo kaya i-frame perfect 'yan."
+      "FIVE CARD COMBO! That's meta, you didn't know.",
+      "Combo! Certified pro play, you can't touch this.",
+      "Insane mechanics. You can't frame-perfect that."
     ]
   }
 }

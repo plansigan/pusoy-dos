@@ -86,14 +86,15 @@ func _make_card(achievement: Dictionary) -> Control:
 	var icon = UIFactory.make_label(icon_text, 30, Color.WHITE, Vector2(14, 20))
 	card.add_child(icon)
 
+	# Card face is button_bg (light/cream in the classic theme) → on-light text
 	var name_text = String(achievement.get("name", "")) if not hidden else "???"
-	var name_color = ThemeManager.get_color("status_color") if unlocked \
-			else ThemeManager.get_color("text_soft")
+	var name_color = ThemeManager.get_color("text_on_light_primary") if unlocked \
+			else ThemeManager.get_color("text_on_light_secondary")
 	card.add_child(UIFactory.make_label(name_text, 15, name_color, Vector2(60, 12)))
 
 	var desc_text = "Hidden achievement" if hidden \
 			else String(achievement.get("description", ""))
-	var desc = UIFactory.make_label(desc_text, 11, ThemeManager.get_color("text_muted"))
+	var desc = UIFactory.make_label(desc_text, 11, ThemeManager.get_color("text_on_light_secondary"))
 	desc.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	desc.offset_left = 60
 	desc.offset_top = 36

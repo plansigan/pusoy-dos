@@ -4,3 +4,7 @@
 
 # Godot editor scene backups
 *.tmp
+
+# Local dev artifacts
+.claude/settings.local.json
+debug/

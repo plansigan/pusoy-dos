@@ -20,6 +20,10 @@ enum Role { NEUTRAL, ALLY, RIVAL2 }
 var game_manager: GameManager
 var difficulty: Difficulty = Difficulty.MEDIUM
 
+# When true, EASY drops its random passes/misplays so the opponents are
+# fully predictable — used by the tutorial's free-play phase.
+var deterministic: bool = false
+
 # Story mode overrides, keyed by player id. Empty for casual/ranked,
 # so behavior there is identical to before.
 var difficulty_by_id: Dictionary = {}
@@ -126,12 +130,14 @@ func _follow(player) -> bool:
 
 	if _active_difficulty == Difficulty.EASY:
 		# Mistakes: sometimes passes with a play in hand, sometimes
-		# burns a stronger card than needed
-		if randf() < 0.25:
-			game_manager.try_pass()
-			return false
-		var pick = candidates[randi() % candidates.size()] if randf() < 0.3 else candidates[0]
-		return _play(player, pick)
+		# burns a stronger card than needed (skipped when deterministic)
+		if not deterministic:
+			if randf() < 0.25:
+				game_manager.try_pass()
+				return false
+			var pick = candidates[randi() % candidates.size()] if randf() < 0.3 else candidates[0]
+			return _play(player, pick)
+		return _play(player, candidates[0])  # deterministic: always weakest beat
 
 	var min_opp = _min_opponent_cards(player)
 	var aggressive = min_opp <= 2 or (_active_difficulty == Difficulty.HARD and min_opp <= 3)

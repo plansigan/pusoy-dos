@@ -56,11 +56,11 @@ func _build_mode_stage() -> void:
 
 	_add_mode_button("CASUAL",
 			"Practice freely. Pick your AI difficulty. No rating.",
-			"", 74, _on_casual_pressed, false)
+			"", 66, _on_casual_pressed, false)
 	_add_mode_button("RANKED",
 			"Climb the ladder. AI difficulty scales with your rank.\nQuitting counts as a forfeit.",
 			"Current: %s · %d rating" % [StatsManager.get_rank_name(), StatsManager.rating],
-			174, _on_ranked_pressed, true)
+			182, _on_ranked_pressed, true)
 
 	_add_back_button(_on_back_pressed)
 
@@ -69,7 +69,7 @@ func _add_mode_button(title: String, description: String, footer: String,
 		y: float, handler: Callable, highlighted: bool) -> void:
 	var btn = Button.new()
 	btn.position = Vector2(30, y)
-	btn.size = Vector2(PANEL_SIZE.x - 60, 88)
+	btn.size = Vector2(PANEL_SIZE.x - 60, 102)
 	UIFactory.style_button(btn, ThemeManager.get_color("button_bg"),
 			ThemeManager.get_color("selected") if highlighted \
 					else ThemeManager.get_color("border_soft"),
@@ -77,22 +77,24 @@ func _add_mode_button(title: String, description: String, footer: String,
 	btn.pressed.connect(handler)
 	panel.add_child(btn)
 
+	# The button face is a light/cream panel in the classic theme, so its
+	# text uses the on-light token family (dark there, light on dark themes).
 	var name_label = UIFactory.make_label(title, 18,
-			ThemeManager.get_color("button_text"), Vector2(0, 8))
+			ThemeManager.get_color("text_on_light_primary"), Vector2(0, 12))
 	name_label.size = Vector2(btn.size.x, 24)
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	btn.add_child(name_label)
 
 	var desc = UIFactory.make_label(description, 11,
-			ThemeManager.get_color("text_muted"), Vector2(0, 34))
-	desc.size = Vector2(btn.size.x, 32)
+			ThemeManager.get_color("text_on_light_secondary"), Vector2(0, 40))
+	desc.size = Vector2(btn.size.x, 34)
 	desc.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	btn.add_child(desc)
 
 	if footer != "":
 		var foot = UIFactory.make_label(footer, 11,
-				ThemeManager.get_color("status_color"), Vector2(0, 66))
-		foot.size = Vector2(btn.size.x, 16)
+				ThemeManager.get_color("text_on_light_primary"), Vector2(0, 78))
+		foot.size = Vector2(btn.size.x, 18)
 		foot.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		btn.add_child(foot)
 
@@ -112,7 +114,7 @@ func _on_ranked_pressed() -> void:
 # =============================================================
 
 func _build_difficulty_stage() -> void:
-	_add_title("CASUAL — AI DIFFICULTY")
+	_add_title("CASUAL: AI DIFFICULTY")
 
 	var btn_w = 150.0
 	var spacing = 14.0

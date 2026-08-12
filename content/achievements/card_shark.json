@@ -1,7 +1,7 @@
 {
   "id": "card_shark",
   "name": "Card Shark",
-  "description": "Climb the ranked ladder to the Card Shark tier.",
+  "description": "Climb the ranked ladder to the Pusoy Pro tier.",
   "icon": "🦈",
   "order": 5,
   "condition": { "type": "rank_index", "value": 2 }

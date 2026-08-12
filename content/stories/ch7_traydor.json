@@ -1,8 +1,8 @@
 {
   "id": "ch7_traydor",
   "chapter_number": 7,
-  "title": "Ang Traydor",
-  "subtitle": "Business, Walang Personalan",
+  "title": "The Traitor",
+  "subtitle": "Business, Nothing Personal",
   "unlock": { "requires_chapter": "ch6_hotshot", "requires_rank": null },
   "seats": {
     "rival": "ka_dencio",
@@ -12,29 +12,29 @@
   "deal": null,
   "scenes": {
     "intro": [
-      { "narration": "Tricycle terminal, midnight. A table blocks the line of parked trikes. Ka Dencio is waiting — and so is Kuya Rico." },
-      { "speaker": "ka_dencio", "emotion": "smug", "text": "Sakay na, bata. Pero 'wag kang matakot—kakampi mo si Rico ngayon. Utang na loob daw." },
-      { "speaker": "kuya_rico", "emotion": "happy", "text": "Oo naman! Kakampi mo 'ko, promise. Free 'to—este, konting porsyento lang sa panalo." },
-      { "speaker": "ka_dencio", "emotion": "neutral", "text": "Rico. Alam mong utang ka rin sa 'kin, diba? Pang-gasolina mo last week." },
-      { "speaker": "kuya_rico", "emotion": "shocked", "text": "Ka Dencio... nandiyan ka pala. Kumusta po. Ang ganda ng trike niyo—bago 'yung side mirror?" },
-      { "speaker": "ka_dencio", "emotion": "smug", "text": "Tignan natin gaano katagal ang loyalty mo, Rico. Andar na tayo." },
+      { "narration": "Tricycle terminal, midnight. A table blocks the line of parked trikes. Ka Dencio is waiting, and so is Kuya Rico." },
+      { "speaker": "ka_dencio", "emotion": "smug", "text": "Hop in, kid. Don't be scared, Rico's on your team today. Says he owes you one." },
+      { "speaker": "kuya_rico", "emotion": "happy", "text": "Of course! I'm on your side, promise. This one's free, I mean, just a small cut of the winnings." },
+      { "speaker": "ka_dencio", "emotion": "neutral", "text": "Rico. You know you owe me too, right? Your gas money from last week." },
+      { "speaker": "kuya_rico", "emotion": "shocked", "text": "Ka Dencio... you're here. Hello po. Nice trike, is that a new side mirror?" },
+      { "speaker": "ka_dencio", "emotion": "smug", "text": "Let's see how long your loyalty lasts, Rico. Let's roll." },
       { "pause": 1.0 },
-      { "speaker": "kuya_rico", "emotion": "neutral", "text": "Wag kang mag-alala, bata. Ako bahala sa likod mo. Solid tayo—parang bakal na trike." },
+      { "speaker": "kuya_rico", "emotion": "neutral", "text": "Don't worry, kid. I've got your back. We're solid, like a steel trike." },
       { "speaker": "player", "text": "..." },
-      { "narration": "Ka Dencio smiled and jingled his pocket — the clink of coins carried across the terminal." },
-      { "speaker": "ka_dencio", "emotion": "happy", "text": "O Rico, may dagdag akong pang-gasolina para sa nakakaalam kung kailan lilipat ng pila." },
-      { "speaker": "kuya_rico", "emotion": "smug", "text": "...ehe. Basta ilabas mo muna 'yang tres, bata. Nakikinig lang ako sa... sarili ko." }
+      { "narration": "Ka Dencio smiled and jingled his pocket. The clink of coins carried across the terminal." },
+      { "speaker": "ka_dencio", "emotion": "happy", "text": "Hey Rico, I've got extra gas money for anyone who knows when to switch lanes." },
+      { "speaker": "kuya_rico", "emotion": "smug", "text": "...ehe. Just put down that three, kid. I'm only listening to... myself." }
     ],
     "win": [
-      { "narration": "Your hand is empty — even with a knife in your back." },
-      { "speaker": "ka_dencio", "emotion": "shocked", "text": "Natalo mo 'ko?! Kahit tumraydor si Rico, natalo pa rin kita?!" },
-      { "speaker": "kuya_rico", "emotion": "happy", "text": "Uy congrats, bata! ...ako ba, may kickback? Kakampi mo 'ko kanina eh." },
-      { "speaker": "ka_dencio", "emotion": "neutral", "text": "Hmp. Astig ka, bata. Sakay ka—libre, ngayon lang. Wag mong sabihin kay Rico." }
+      { "narration": "Your hand is empty, even with a knife in your back." },
+      { "speaker": "ka_dencio", "emotion": "shocked", "text": "You beat me?! Even after Rico turned on you, you still won?!" },
+      { "speaker": "kuya_rico", "emotion": "happy", "text": "Uy congrats, kid! ...do I get a kickback, though? I was on your team earlier." },
+      { "speaker": "ka_dencio", "emotion": "neutral", "text": "Hmp. You're good, kid. Hop in, free ride, just this once. Don't tell Rico." }
     ],
     "lose": [
-      { "speaker": "ka_dencio", "emotion": "smug", "text": "Andar na 'ko! Salamat, Rico—maganda ang deal natin." },
-      { "speaker": "kuya_rico", "emotion": "shocked", "text": "Sorry ha, bata! Business lang talaga 'to—i-po-post-date ko 'yung sorry ko!" },
-      { "speaker": "ka_dencio", "emotion": "happy", "text": "Balik ka. Pero next time, mag-ingat ka sa pipiliin mong kakampi." }
+      { "speaker": "ka_dencio", "emotion": "smug", "text": "Off I go! Thanks, Rico, good doing business with you." },
+      { "speaker": "kuya_rico", "emotion": "shocked", "text": "Sorry, ha, kid! It's just business. I'll post-date my apology!" },
+      { "speaker": "ka_dencio", "emotion": "happy", "text": "Come back. But next time, be careful who you pick as a teammate." }
     ]
   },
   "match_events": [
@@ -42,9 +42,9 @@
       "trigger": { "type": "turn_number", "value": 6 },
       "once": true,
       "lines": [
-        { "speaker": "kuya_rico", "emotion": "smug", "text": "Alam mo bata... sorry ha. Business 'to, walang personalan." },
-        { "speaker": "ka_dencio", "emotion": "happy", "text": "Mas malaki ang alok ko, 'no Rico? Welcome sa tamang pila." },
-        { "speaker": "kuya_rico", "emotion": "happy", "text": "Wag kang magalit—i-po-post-date ko na lang 'yung pagtataksil." }
+        { "speaker": "kuya_rico", "emotion": "smug", "text": "You know, kid... sorry, ha. This is business, nothing personal." },
+        { "speaker": "ka_dencio", "emotion": "happy", "text": "My offer's bigger, right Rico? Welcome to the right lane." },
+        { "speaker": "kuya_rico", "emotion": "happy", "text": "Don't be mad, I'll just post-date the betrayal." }
       ],
       "actions": [ { "set_role": { "seat": "seat3", "role": "rival2" } } ]
     },
@@ -52,7 +52,7 @@
       "trigger": { "type": "player_cards_left", "value": 3 },
       "once": true,
       "lines": [
-        { "speaker": "ka_dencio", "emotion": "shocked", "text": "Tatlo ka na lang?! Kahit dalawa na kayong kalaban, malapit ka pa rin?!" }
+        { "speaker": "ka_dencio", "emotion": "shocked", "text": "Only three left?! It's two against you now, and you're still this close?!" }
       ],
       "actions": []
     }

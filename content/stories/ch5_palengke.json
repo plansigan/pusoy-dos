@@ -1,8 +1,8 @@
 {
   "id": "ch5_palengke",
   "chapter_number": 5,
-  "title": "Ang Palengke",
-  "subtitle": "Tawad Pa!",
+  "title": "The Market",
+  "subtitle": "Still Haggling!",
   "unlock": { "requires_chapter": "ch4_utang", "requires_rank": null },
   "seats": {
     "rival": "aling_tessie",
@@ -12,29 +12,29 @@
   "deal": null,
   "scenes": {
     "intro": [
-      { "narration": "Dawn at the palengke. Smell of fish and kape. A table blocks the gap between two stalls." },
-      { "speaker": "aling_tessie", "emotion": "smug", "text": "TESSIE FISH! Sariwa! ...uy ikaw, bata, tumawad ka pa ba o tatalo ka na?" },
-      { "speaker": "ate_marites", "emotion": "smug", "text": "Uy Tessie. Kakampi ko 'yang bata. Katapat mo kaming dalawa ngayon." },
-      { "speaker": "aling_tessie", "emotion": "angry", "text": "Ikaw?! Ang babaeng nangungutang ng bangus tapos chinichismis ang presyo ko?!" },
-      { "speaker": "ate_marites", "emotion": "shocked", "text": "Ha?! Isang beses lang 'yon! ...at bilasa naman talaga 'yung bangus, sorry." },
-      { "speaker": "aling_tessie", "emotion": "angry", "text": "Hoy! Walang bilasa sa Tessie Fish! Fixed price, walang palako!" },
+      { "narration": "Dawn at the market. The smell of fish and coffee. A table blocks the gap between two stalls." },
+      { "speaker": "aling_tessie", "emotion": "smug", "text": "TESSIE FISH! Fresh! ...uy you, kid, still haggling, or ready to lose?" },
+      { "speaker": "ate_marites", "emotion": "smug", "text": "Uy Tessie. This kid is on my team. You're up against the two of us today." },
+      { "speaker": "aling_tessie", "emotion": "angry", "text": "You?! The one who bought bangus on credit and then gossiped about my prices?!" },
+      { "speaker": "ate_marites", "emotion": "shocked", "text": "Ha?! That was one time! ...and honestly, that bangus was a little spoiled, sorry." },
+      { "speaker": "aling_tessie", "emotion": "angry", "text": "Hoy! Nothing is spoiled at Tessie Fish! Fixed price, no discounts!" },
       { "pause": 1.0 },
-      { "speaker": "ate_marites", "emotion": "happy", "text": "Bata, ako bahala sa likod mo. Ipitin natin 'to parang timbang na dinaya niya." },
-      { "speaker": "aling_tessie", "emotion": "angry", "text": "ANONG DINAYA?! Timbang ko, tama! ...minsan lang sobra, para sa 'yo!" },
+      { "speaker": "ate_marites", "emotion": "happy", "text": "Kid, I've got your back. Let's ipit her like one of her rigged scales." },
+      { "speaker": "aling_tessie", "emotion": "angry", "text": "RIGGED?! My scale is accurate! ...it only gives extra, and only for you!" },
       { "speaker": "player", "text": "..." },
       { "narration": "Aling Tessie slapped the table with a wet hand. The air smelled like tilapia." },
-      { "speaker": "aling_tessie", "emotion": "smug", "text": "Sige, ilabas mo 'yang tres. Pero tandaan: sa palengke, ako ang nagtatakda ng presyo." }
+      { "speaker": "aling_tessie", "emotion": "smug", "text": "Go on, put down that three. But remember, at the market, I set the price." }
     ],
     "win": [
-      { "speaker": "aling_tessie", "emotion": "shocked", "text": "Naubos mo cards mo?! Naunahan mo 'ko—dalawa nga kayo, hindi patas 'to!" },
-      { "speaker": "ate_marites", "emotion": "happy", "text": "Team-team lang, Tessie! Sabi ko sa 'yo, magaling ang suki ko." },
-      { "narration": "Marites cackled. Tessie flung her bimpo on the table — then, quietly, smiled." },
-      { "speaker": "aling_tessie", "emotion": "neutral", "text": "Hmp. Sige na. Balik kayo—may bagong deliver bukas. Tawad pa rin, ha." }
+      { "speaker": "aling_tessie", "emotion": "shocked", "text": "You're out of cards?! You got there first. Two against one, that's not fair!" },
+      { "speaker": "ate_marites", "emotion": "happy", "text": "Just good teamwork, Tessie! I told you, my suki here is good." },
+      { "narration": "Marites cackled. Tessie flung her towel on the table, then, quietly, she smiled." },
+      { "speaker": "aling_tessie", "emotion": "neutral", "text": "Hmp. Fine. Come back, there's a fresh delivery tomorrow. Still open to a little haggling, ha." }
     ],
     "lose": [
-      { "speaker": "aling_tessie", "emotion": "smug", "text": "HA! Kahit dalawa kayo, ako pa rin! Reyna ng palengke, walang tatalo!" },
-      { "speaker": "ate_marites", "emotion": "angry", "text": "Grabe ka, Tessie! Kakampi ko 'yan!" },
-      { "speaker": "aling_tessie", "emotion": "happy", "text": "Sige na, next time. Bili muna kayo ng isda—suki discount, konti lang." }
+      { "speaker": "aling_tessie", "emotion": "smug", "text": "HA! Even two of you, still not enough! Queen of the market, nobody beats me!" },
+      { "speaker": "ate_marites", "emotion": "angry", "text": "Come on, Tessie! That's my teammate!" },
+      { "speaker": "aling_tessie", "emotion": "happy", "text": "Alright, next time. Buy some fish first, suki discount, just a little one." }
     ]
   },
   "match_events": [
@@ -42,7 +42,7 @@
       "trigger": { "type": "player_cards_left", "value": 4 },
       "once": true,
       "lines": [
-        { "speaker": "aling_tessie", "emotion": "smug", "text": "Apat na lang cards mo? Tawad—baba mo 'yang taya, bata!" }
+        { "speaker": "aling_tessie", "emotion": "smug", "text": "Only four cards left? Haggle it down, lower that bet, kid!" }
       ],
       "actions": []
     },
@@ -50,7 +50,7 @@
       "trigger": { "type": "rival_cards_left", "value": 5 },
       "once": true,
       "lines": [
-        { "speaker": "ate_marites", "emotion": "smug", "text": "Malapit na si Tessie! Ipit mo na—para 'yang huling bangus tuwing tanghali!" }
+        { "speaker": "ate_marites", "emotion": "smug", "text": "Tessie's getting close! Ipit her now, like the last bangus at noon!" }
       ],
       "actions": []
     }

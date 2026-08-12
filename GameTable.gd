@@ -48,6 +48,7 @@ var avatars: Array = []              # [AvatarSlot, AvatarSlot, AvatarSlot] for 
 var hand_fan: HandFan
 var table_history_container: VBoxContainer
 var table_scroll: ScrollContainer
+var last_play_panel: Panel           # the "last play" box (raised in tutorial)
 var last_play_card_container: VBoxContainer
 var last_play_player_label: Label
 var play_button: Button
@@ -57,7 +58,23 @@ var _status_tween: Tween        # active status-label crossfade, if any
 var menu_button: Button
 var settings_button: Button
 var sort_button: Button
+var help_button: Button
+var buttons_row: HBoxContainer      # Pass/Play row (raised during tutorial highlights)
 var drop_zone: DropZone
+var _help_modal: HelpModal = null
+
+# --- Tutorial mode state (only used when GameSession.mode == TUTORIAL) ---
+signal _tut_step_signal              # emitted when the player clears the current step
+var _tut_active: bool = false        # guided tutorial running
+var _tut_free_play: bool = false     # final step — normal play/AI resumed
+var _tut_step_index: int = 0
+var _tut_awaiting: bool = false      # driver is blocked waiting on the player
+var _tut_required: Dictionary = {}   # current step's required-action descriptor
+var _tut_allowed_cards: Array = []   # Card refs the fan is locked to this step
+var _tut_dim: ColorRect = null       # spotlight dim behind raised targets
+var _tut_bubble: Panel = null        # persistent Lolo instruction panel
+var _tut_raised: Array = []          # [{node,z}] originals to restore after a highlight
+var _tut_last_correct_ms: int = 0    # throttle for Lolo's correction bubbles
 
 
 # =============================================================
@@ -101,6 +118,8 @@ func _start_game() -> void:
 	elif GameSession.mode == GameSession.Mode.PUZZLE:
 		puzzle = ContentManager.get_puzzle(GameSession.puzzle_id)
 		preset = ContentManager.deal_to_hands(puzzle)
+	elif GameSession.mode == GameSession.Mode.TUTORIAL:
+		preset = ContentManager.deal_to_hands(ContentManager.get_tutorial())
 	game_manager.setup_game(preset)
 	_apply_sort()
 
@@ -114,6 +133,11 @@ func _start_game() -> void:
 			_setup_story_ai()
 		GameSession.Mode.PUZZLE:
 			ai_player.difficulty = ContentManager.puzzle_ai_difficulty(puzzle)
+			# Puzzles must be reproducible: EASY opponents otherwise pass/misplay
+			# at random, so a solved line might not replay.
+			ai_player.deterministic = true
+		GameSession.Mode.TUTORIAL:
+			_setup_tutorial_ai()
 		_:
 			ai_player.difficulty = GameSession.casual_difficulty
 
@@ -127,13 +151,16 @@ func _start_game() -> void:
 	match_recorded = false
 	human_plays = 0
 	ai_chain_running = false   # defensive: GameTable is reused across Play Again
+	_reset_tutorial_state()
 	_connect_buttons()
-	if GameSession.mode == GameSession.Mode.STORY:
+	if GameSession.mode == GameSession.Mode.STORY or GameSession.mode == GameSession.Mode.TUTORIAL:
 		_apply_story_seats()
 	await _deal_cards_animated()
 	if not is_inside_tree():
 		return
 	_refresh_all()
+	if GameSession.mode == GameSession.Mode.TUTORIAL:
+		_tut_begin()
 
 
 func _connect_buttons() -> void:
@@ -158,6 +185,7 @@ func _build_layout() -> void:
 	_add_status_label(sw, sh)
 	_add_menu_button(sh)
 	_add_settings_button(sh)
+	_add_help_button(sh)
 	_add_sort_button(sw, sh)
 	_add_objective_banner(sw)
 
@@ -191,6 +219,7 @@ func _add_center_area(sw: float, sh: float) -> void:
 	last_play.position = Vector2(padding, top)
 	last_play.size = Vector2(last_play_w, center_h)
 	add_child(last_play)
+	last_play_panel = last_play
 	last_play.add_child(_make_caption("last play"))
 
 	last_play_player_label = UIFactory.make_label("", 12,
@@ -274,6 +303,7 @@ func _add_hand_fan(sw: float, sh: float) -> void:
 	hand_fan.play_drag_moved.connect(_on_play_drag_moved)
 	hand_fan.play_drag_ended.connect(_on_play_drag_ended)
 	hand_fan.play_dropped.connect(_on_play_dropped)
+	hand_fan.illegal_card_tapped.connect(_on_illegal_card_tapped)
 
 
 func _add_buttons(sw: float, sh: float) -> void:
@@ -282,6 +312,7 @@ func _add_buttons(sw: float, sh: float) -> void:
 	row.size = Vector2(240, 32)
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(row)
+	buttons_row = row
 
 	var button_size = Vector2(110, 30)
 
@@ -336,6 +367,18 @@ func _add_settings_button(sh: float) -> void:
 			ThemeManager.get_color("border_soft"), ThemeManager.get_color("button_text"), 4, 1)
 	add_child(settings_button)
 	settings_button.pressed.connect(_on_settings_pressed)
+
+
+func _add_help_button(sh: float) -> void:
+	help_button = Button.new()
+	help_button.text = "?"
+	help_button.position = Vector2(184, sh - 36)
+	help_button.custom_minimum_size = Vector2(34, 28)
+	help_button.add_theme_font_size_override("font_size", 14)
+	UIFactory.style_button(help_button, ThemeManager.get_color("button_bg"),
+			ThemeManager.get_color("border_soft"), ThemeManager.get_color("button_text"), 4, 1)
+	add_child(help_button)
+	help_button.pressed.connect(_on_help_pressed)
 
 
 func _add_sort_button(sw: float, sh: float) -> void:
@@ -441,11 +484,23 @@ func _open_quit_dialog() -> void:
 		GameSession.Mode.RANKED: quit_title = "⚠ Quit ranked game?"
 		GameSession.Mode.STORY: quit_title = "Quit chapter?"
 		GameSession.Mode.PUZZLE: quit_title = "Quit puzzle?"
+		GameSession.Mode.TUTORIAL: quit_title = "Quit tutorial?"
 	var title = UIFactory.make_label(quit_title,
 			18, ThemeManager.get_color("status_color"), Vector2(0, 22))
 	title.size = Vector2(panel.size.x, 26)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	panel.add_child(title)
+
+	# "?" Help, reachable from the pause dialog too (opens above it)
+	var help = Button.new()
+	help.text = "?"
+	help.position = Vector2(panel.size.x - 44, 12)
+	help.size = Vector2(32, 32)
+	help.add_theme_font_size_override("font_size", 14)
+	UIFactory.style_button(help, ThemeManager.get_color("button_bg"),
+			ThemeManager.get_color("border_soft"), ThemeManager.get_color("button_text"), 4, 1)
+	help.pressed.connect(_open_help.bind(quit_dialog))
+	panel.add_child(help)
 
 	if ranked:
 		var body = UIFactory.make_label(
@@ -515,6 +570,41 @@ func _on_settings_closed(theme_changed: bool) -> void:
 	else:
 		hand_fan.set_input_enabled(
 				not is_ai_turn and not is_dealing and not game_manager.game_over)
+
+
+# --- Help modal (combos reference) ---
+
+func _on_help_pressed() -> void:
+	_open_help(self)
+
+
+# `over` lets the quit dialog open Help on top of itself.
+func _open_help(over: Node) -> void:
+	if _help_modal != null and is_instance_valid(_help_modal):
+		return
+	ui_locked = true                       # the AI loop waits while Help is open
+	hand_fan.set_input_enabled(false)
+	_help_modal = HelpModal.open(over, _on_help_closed)
+
+
+func _on_help_closed() -> void:
+	_help_modal = null
+	# Keep the loop paused if the quit dialog is still underneath.
+	if quit_dialog == null:
+		ui_locked = false
+	# Tutorial: closing Help is what completes the "open the Help" step.
+	if _tut_active and _tut_awaiting and String(_tut_required.get("type", "")) == "help":
+		_tut_step_signal.emit()
+		return
+	# Normal play: restore hand input for the current turn state. During a
+	# guided tutorial step the step owns hand input, so leave it untouched.
+	if not _tut_guided() and game_manager != null and not game_manager.game_over \
+			and quit_dialog == null:
+		hand_fan.set_input_enabled(not is_ai_turn and not is_dealing)
+
+
+func _tut_guided() -> bool:
+	return _tut_active and not _tut_free_play
 
 
 # Rebuild every UI node in the new theme while keeping the game state
@@ -722,6 +812,8 @@ func _refresh_hand() -> void:
 		hand_fan.apply_hints({})
 		is_ai_turn = true
 		_update_status()
+		if _tut_guided():
+			return  # the tutorial driver runs the opponents itself
 		if ai_chain_running:
 			return  # a rebuild refreshed mid-chain — don't start a second loop
 		await get_tree().create_timer(randf_range(0.4, 0.9)).timeout
@@ -772,6 +864,9 @@ func _update_pass_button() -> void:
 
 # Dim cards that can't help beat the current table
 func _apply_hints() -> void:
+	if _tut_guided():
+		hand_fan.apply_hints({})   # tutorial uses its own selectable lock, not hints
+		return
 	var relevant = Settings.show_hints \
 			and not is_ai_turn and not is_dealing \
 			and not game_manager.game_over \
@@ -906,6 +1001,9 @@ func _update_objective_banner() -> void:
 func _on_play_pressed() -> void:
 	if is_ai_turn or is_dealing:
 		return
+	if _tut_guided():
+		_tut_handle_play(hand_fan.get_selected())
+		return
 	var selected = hand_fan.get_selected()
 	if selected.is_empty():
 		_set_status("Select cards first!")
@@ -920,13 +1018,13 @@ func _on_play_pressed() -> void:
 		await _commit_human_play(origins, selected)
 	else:
 		hand_fan.shake(selected)
-		_set_status("Invalid play — try again!")
+		_set_status("Invalid play. Try again!")
 
 
 # Shared post-play flow for button, double-click, and drag-drop plays
 func _commit_human_play(origins: Array, cards: Array) -> void:
 	human_plays += 1
-	if cards.size() >= 2:
+	if cards.size() >= 2 and GameSession.mode != GameSession.Mode.TUTORIAL:
 		StatsManager.record_combo()
 	SoundManager.play("card_play")
 	hand_fan.sync(game_manager.players[0].hand, false)
@@ -946,6 +1044,9 @@ func _commit_human_play(origins: Array, cards: Array) -> void:
 # Double-click plays a card immediately if it's a legal single
 func _on_card_double_clicked(card: Card) -> void:
 	if is_ai_turn or is_dealing:
+		return
+	if _tut_guided():
+		_tut_handle_play([card])
 		return
 	var origins = [hand_fan.global_origin_of(card)]
 	if game_manager.try_play([card]):
@@ -974,6 +1075,10 @@ func _on_play_dropped(cards: Array, global_pos: Vector2) -> void:
 	if is_ai_turn or is_dealing or cards.is_empty():
 		hand_fan.return_play_drag()
 		return
+	if _tut_guided():
+		hand_fan.return_play_drag()   # settle cards, then validate the attempt
+		_tut_handle_play(cards)
+		return
 	if not drop_zone.get_global_rect().has_point(global_pos):
 		# Dropped outside the zone — cards glide home, selection kept
 		hand_fan.return_play_drag()
@@ -987,14 +1092,17 @@ func _on_play_dropped(cards: Array, global_pos: Vector2) -> void:
 	else:
 		hand_fan.return_play_drag()
 		hand_fan.shake(cards)
-		_set_status("Invalid play — try again!")
+		_set_status("Invalid play. Try again!")
 
 
 func _on_pass_pressed() -> void:
 	if is_ai_turn or is_dealing:
 		return
+	if _tut_guided():
+		_tut_handle_pass()
+		return
 	if game_manager.table_cards.is_empty():
-		_set_status("Can't pass — you must play!")
+		_set_status("Can't pass. You must play!")
 		return
 	game_manager.try_pass()
 	var cleared = game_manager.table_cards.is_empty()
@@ -1126,6 +1234,9 @@ func _show_win_screen(winner_name: String) -> void:
 	await get_tree().create_timer(0.5).timeout
 	if not is_inside_tree():
 		return
+	if GameSession.mode == GameSession.Mode.TUTORIAL:
+		_show_tutorial_end()
+		return
 	if GameSession.mode == GameSession.Mode.STORY:
 		_show_story_end()
 		return
@@ -1133,7 +1244,7 @@ func _show_win_screen(winner_name: String) -> void:
 		_show_puzzle_end()
 		return
 	WinScreen.show(self, winner_name, Callable(self, "_on_play_again_pressed"),
-			summary, _win_rating_countup)
+			Callable(self, "_on_win_to_menu"), summary, _win_rating_countup)
 
 
 # Record the finished game exactly once; returns WinScreen summary lines
@@ -1142,6 +1253,9 @@ func _record_result() -> Array:
 		return []
 	match_recorded = true
 	_win_rating_countup = {}
+	# The tutorial is practice — never touch stats, rating, or achievements.
+	if GameSession.mode == GameSession.Mode.TUTORIAL:
+		return []
 	var human_won = game_manager.winner.id == 0
 	var flawless = human_won and _is_flawless_win()
 	var sf_finish = human_won and _finished_with_straight_flush()
@@ -1178,7 +1292,7 @@ func _record_result() -> Array:
 			}
 		_:
 			StatsManager.record_casual(human_won, flawless, human_plays)
-			lines = ["Casual match — no rating change"]
+			lines = ["Casual match, no rating change"]
 
 	# Achievements check AFTER all stats/progression updates, every mode
 	var newly = AchievementManager.evaluate({
@@ -1211,6 +1325,13 @@ func _on_play_again_pressed() -> void:
 	await get_tree().process_frame
 	_build_layout()
 	_start_game()
+
+
+# Leave to the menu from the win screen. The game is already over and the
+# result was recorded once in _record_result, so this path records nothing
+# and needs no forfeit or confirm dialog.
+func _on_win_to_menu() -> void:
+	TransitionManager.change_scene("res://MainMenu.tscn")
 
 
 # =============================================================
@@ -1280,7 +1401,9 @@ func _seat_index(key: String) -> int:
 
 
 func _display_name(index: int) -> String:
-	if GameSession.mode == GameSession.Mode.STORY and index >= 1 and index < seat_char_ids.size():
+	var named = GameSession.mode == GameSession.Mode.STORY \
+			or GameSession.mode == GameSession.Mode.TUTORIAL
+	if named and index >= 1 and index < seat_char_ids.size():
 		return String(ContentManager.get_character(seat_char_ids[index]).get("display_name", ""))
 	return game_manager.players[index].name
 
@@ -1589,7 +1712,7 @@ func _show_puzzle_end() -> void:
 	if puzzle_solved_this_run:
 		detail_text = "Cleared in %d plays" % human_plays
 		if puzzle_new_best:
-			detail_text += " — new best!"
+			detail_text += ", new best!"
 	elif game_manager.winner != null and game_manager.winner.id == 0:
 		detail_text = "You won the round, but missed the objective."
 	else:
@@ -1678,6 +1801,461 @@ func _spawn_achievement_toast(achievement: Dictionary, index: int) -> void:
 		if is_instance_valid(panel):
 			panel.queue_free()
 	)
+
+
+# =============================================================
+# TUTORIAL MODE — guided first match taught by Lolo Carding
+#
+# The driver walks TutorialManager.STEPS. For each step it (1) arranges the
+# board — scripting the opponents or resetting to a player lead — then
+# (2) shows Lolo's persistent instruction, spotlights the target, and locks
+# the hand to just the cards that step needs. Player input is gated against
+# the step's requirement; the wrong move gets a gentle correction and no
+# state change, so the tutorial can never soft-lock. The last step removes
+# the locks and hands off to the normal AI loop (EASY + deterministic).
+# =============================================================
+
+func _reset_tutorial_state() -> void:
+	_tut_active = false
+	_tut_free_play = false
+	_tut_step_index = 0
+	_tut_awaiting = false
+	_tut_required = {}
+	_tut_allowed_cards = []
+	_tut_raised = []       # the nodes themselves are freed on rebuild
+	_tut_dim = null
+	_tut_bubble = null
+
+
+func _setup_tutorial_ai() -> void:
+	var seats = ContentManager.get_tutorial().get("seats", {})
+	seat_char_ids = ["", _seat_char_id(seats, "rival"),
+			_seat_char_id(seats, "seat3"), _seat_char_id(seats, "seat4")]
+	ai_player.rival_id = 1
+	ai_player.difficulty = AIPlayer.Difficulty.EASY
+	ai_player.deterministic = true    # fully predictable for teaching
+	ai_player.difficulty_by_id = {}
+	ai_player.role_by_id = {}
+
+
+func _tut_begin() -> void:
+	_tut_active = true
+	_tut_free_play = false
+	_tut_dim = ColorRect.new()
+	_tut_dim.color = Color(0, 0, 0, 0.0)
+	_tut_dim.mouse_filter = Control.MOUSE_FILTER_IGNORE   # visual only; locks gate input
+	_tut_dim.z_index = 80
+	add_child(_tut_dim)
+	UIFactory.fill_viewport(_tut_dim)
+	create_tween().tween_property(_tut_dim, "color:a", 0.6, 0.25)
+	_tut_run()
+
+
+func _tut_run() -> void:
+	for i in range(TutorialManager.count()):
+		_tut_step_index = i
+		var step = TutorialManager.step(i)
+		await _tut_setup(step)
+		if not is_inside_tree():
+			return
+		if String(step["require"]["type"]) == "free":
+			_tut_enter_free_play(step)
+			return
+		_tut_present(step)
+		_tut_awaiting = true
+		await _tut_step_signal
+		_tut_awaiting = false
+		if not is_inside_tree():
+			return
+
+
+# Arrange the board so the upcoming step's action is exactly achievable.
+func _tut_setup(step: Dictionary) -> void:
+	match String(step["id"]):
+		"beat":
+			# One opponent tops the 3♣, the rest yield → player follows a single
+			await _tut_opponents([{"do": "beat_lowest"}, {"do": "pass"}, {"do": "pass"}])
+		"pass":
+			# Lolo drops the 2♦ (the boss card) over the player's 2♠ → unbeatable
+			await _tut_opponents([{"do": "play_code", "code": "2D"}, {"do": "pass"}, {"do": "pass"}])
+		"pair":
+			# Player just passed; hand the fresh lead back to them
+			_tut_reset_to_player_lead()
+		"straight", "help":
+			# Nobody can top the player's lead → table clears back to the player
+			await _tut_opponents([{"do": "pass"}, {"do": "pass"}, {"do": "pass"}])
+		# "lead3c" and "free" need no board setup
+
+
+# Run the scripted opponents in turn order until control returns to the player.
+func _tut_opponents(plans: Array) -> void:
+	for plan in plans:
+		if not is_inside_tree() or game_manager.game_over:
+			return
+		if game_manager.current_player_index == 0:
+			return
+		await _tut_opponent_move(game_manager.current_player_index, plan)
+		if not is_inside_tree():
+			return
+		await get_tree().create_timer(0.5).timeout
+
+
+func _tut_opponent_move(pid: int, plan: Dictionary) -> void:
+	is_ai_turn = true
+	_update_status()
+	_update_avatars()
+	await get_tree().create_timer(0.45).timeout
+	if not is_inside_tree():
+		return
+	var table_had = not game_manager.table_cards.is_empty()
+	var cards = _tut_pick_cards(pid, plan)
+	var played = false
+	if cards.is_empty():
+		game_manager.try_pass()
+	else:
+		played = game_manager.try_play(cards)
+		if not played:
+			game_manager.try_pass()   # safety: never stall
+	var played_cards: Array = game_manager.play_history.back()["cards"] if played else []
+	var table_cleared = table_had and game_manager.table_cards.is_empty()
+	if played:
+		SoundManager.play("card_play")
+		await _animate_play([avatars[pid - 1].global_circle_center()], played_cards)
+		if not is_inside_tree():
+			return
+	elif table_cleared:
+		SoundManager.play("table_clear")
+		_animate_table_clear()
+	else:
+		SoundManager.play("pass")
+	_refresh_table()
+	_update_avatars()
+
+
+func _tut_pick_cards(pid: int, plan: Dictionary) -> Array:
+	var hand: Array = game_manager.players[pid].hand
+	var table: Array = game_manager.table_cards
+	match String(plan.get("do", "pass")):
+		"pass":
+			return []
+		"lead_lowest":
+			return [Card.sort_cards(hand)[0]]
+		"beat_lowest":
+			for card in Card.sort_cards(hand):
+				if HandEvaluator.can_beat(table, [card]):
+					return [card]
+			return []
+		"play_code":
+			var code = String(plan.get("code", ""))
+			for card in hand:
+				if _card_code(card) == code \
+						and (table.is_empty() or HandEvaluator.can_beat(table, [card])):
+					return [card]
+			return []
+	return []
+
+
+# Narrated hand-back of the lead after the player passes (step 3 → 4).
+func _tut_reset_to_player_lead() -> void:
+	game_manager.table_cards = []
+	game_manager.last_player_index = 0
+	game_manager.current_player_index = 0
+	game_manager.pass_count = 0
+	game_manager.play_history.append({"player": "---", "cards": []})
+	is_ai_turn = false
+	hand_fan.sync(game_manager.players[0].hand, false)
+	_refresh_table()
+	_update_avatars()
+
+
+# --- present a step: instruction bubble + input lock + spotlight ---
+
+func _tut_present(step: Dictionary) -> void:
+	_tut_show_bubble(String(step["text"]))
+	_tut_apply_lock(step)
+	_tut_apply_highlight(String(step["highlight"]))
+
+
+func _tut_apply_lock(step: Dictionary) -> void:
+	var req: Dictionary = step["require"]
+	var rtype = String(req["type"])
+	_tut_required = req
+	is_ai_turn = false
+	hand_fan.clear_selection()
+	match rtype:
+		"play_exact", "play_pair", "play_straight":
+			_tut_allowed_cards = _tut_resolve_cards(req.get("cards", []))
+			hand_fan.set_input_enabled(true)
+			hand_fan.set_selectable(_tut_allowed_cards)
+			play_button.disabled = false
+			pass_button.disabled = true
+		"pass":
+			_tut_allowed_cards = []
+			hand_fan.set_input_enabled(true)
+			hand_fan.set_selectable([])       # nothing selectable — only Pass
+			play_button.disabled = true
+			pass_button.disabled = false
+		"help":
+			_tut_allowed_cards = []
+			hand_fan.set_input_enabled(true)
+			hand_fan.set_selectable([])
+			play_button.disabled = true
+			pass_button.disabled = true
+	settings_button.disabled = true
+	sort_button.disabled = true
+	help_button.disabled = rtype != "help"
+
+
+func _tut_apply_highlight(tag: String) -> void:
+	_tut_clear_highlight()
+	if tag == "none":
+		if is_instance_valid(_tut_dim):
+			_tut_dim.visible = false
+		return
+	if is_instance_valid(_tut_dim):
+		_tut_dim.visible = true
+	# Raise the action area + the table above the dim so it reads as focus
+	var targets: Array = [status_label, last_play_panel, hand_fan, buttons_row]
+	if tag == "help":
+		targets.append(help_button)
+	for node in targets:
+		if is_instance_valid(node):
+			_tut_raised.append({"node": node, "z": node.z_index})
+			node.z_index = 82
+
+
+func _tut_clear_highlight() -> void:
+	for entry in _tut_raised:
+		if is_instance_valid(entry["node"]):
+			entry["node"].z_index = entry["z"]
+	_tut_raised.clear()
+
+
+# Persistent instruction panel (bark-bubble visuals, Lolo's accent).
+func _tut_show_bubble(text: String) -> void:
+	if is_instance_valid(_tut_bubble):
+		_tut_bubble.queue_free()
+	var accent = _speaker_accent(TutorialManager.SPEAKER)
+	var width = 590.0
+	var est_lines = maxi(2, ceili(text.length() / 58.0))
+	var height = 34.0 + est_lines * 20.0
+	var panel = Panel.new()
+	panel.add_theme_stylebox_override("panel",
+			UIFactory.flat_style(ThemeManager.get_color("panel_bg"), 10, 2, accent))
+	panel.size = Vector2(width, height)
+	panel.position = Vector2(BASE_W - width - 20, 150)
+	panel.z_index = 96
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(panel)
+	_tut_bubble = panel
+
+	var name_tag = UIFactory.make_label("Lolo Carding", 12, accent, Vector2(14, 6))
+	panel.add_child(name_tag)
+
+	var label = UIFactory.make_label(text, 14, ThemeManager.get_color("text_primary"))
+	label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	label.offset_left = 14
+	label.offset_top = 28
+	label.offset_right = -14
+	label.offset_bottom = -8
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	panel.add_child(label)
+
+	panel.modulate.a = 0.0
+	panel.create_tween().tween_property(panel, "modulate:a", 1.0, 0.2)
+
+
+# --- player action gating ---
+
+func _tut_handle_play(cards: Array) -> void:
+	if not _tut_awaiting:
+		return
+	var rtype = String(_tut_required.get("type", ""))
+	if not (rtype in ["play_exact", "play_pair", "play_straight"]) \
+			or not _tut_play_matches(rtype, cards):
+		_tut_correct()
+		if not cards.is_empty():
+			hand_fan.shake(cards)
+		return
+	_tut_awaiting = false
+	await _tut_commit_play(cards)
+	if is_inside_tree():
+		_tut_step_signal.emit()
+
+
+func _tut_commit_play(cards: Array) -> void:
+	var origins = []
+	for card in cards:
+		origins.append(hand_fan.global_origin_of(card))
+	if game_manager.try_play(cards):
+		await _commit_human_play(origins, cards)
+	else:
+		hand_fan.shake(cards)   # validated already, but never trust blindly
+
+
+func _tut_handle_pass() -> void:
+	if not _tut_awaiting:
+		return
+	if String(_tut_required.get("type", "")) != "pass":
+		_tut_correct()
+		return
+	_tut_awaiting = false
+	game_manager.try_pass()
+	var cleared = game_manager.table_cards.is_empty()
+	SoundManager.play("table_clear" if cleared else "pass")
+	hand_fan.clear_selection()
+	if cleared:
+		_animate_table_clear()
+	_refresh_table()
+	_refresh_hand()
+	_update_avatars()
+	await get_tree().process_frame
+	if is_inside_tree():
+		_tut_step_signal.emit()
+
+
+func _tut_play_matches(rtype: String, cards: Array) -> bool:
+	if not _same_card_set(cards, _tut_allowed_cards):
+		return false
+	match rtype:
+		"play_pair":
+			return HandEvaluator.get_play_type(cards) == HandEvaluator.PlayType.PAIR
+		"play_straight":
+			return HandEvaluator.get_play_type(cards) == HandEvaluator.PlayType.STRAIGHT
+	return true
+
+
+func _tut_resolve_cards(codes) -> Array:
+	var result = []
+	for code in codes:
+		for card in game_manager.players[0].hand:
+			if _card_code(card) == String(code) and not result.has(card):
+				result.append(card)
+				break
+	return result
+
+
+func _card_code(card: Card) -> String:
+	return card.rank + ["C", "D", "H", "S"][card.suit]
+
+
+func _same_card_set(a: Array, b: Array) -> bool:
+	if a.size() != b.size():
+		return false
+	for card in a:
+		if not b.has(card):
+			return false
+	return true
+
+
+# A locked-out card was tapped — nudge with the current step's correction.
+func _on_illegal_card_tapped() -> void:
+	if _tut_guided() and _tut_awaiting:
+		_tut_correct()
+
+
+# Gentle nudge when the player does the wrong thing — the instruction stays.
+# Throttled so rapid mis-taps don't spam bubbles.
+func _tut_correct() -> void:
+	var now = Time.get_ticks_msec()
+	if now - _tut_last_correct_ms < 1200:
+		return
+	_tut_last_correct_ms = now
+	var text = String(TutorialManager.step(_tut_step_index).get("correction", ""))
+	if text.is_empty():
+		text = "Sundin muna natin ang steps, apo."
+	_show_speech_bubble(1, text, _speaker_accent(TutorialManager.SPEAKER), 2.4)
+
+
+# --- free play + end ---
+
+func _tut_enter_free_play(step: Dictionary) -> void:
+	_tut_free_play = true
+	_tut_awaiting = false
+	_tut_clear_highlight()
+	hand_fan.clear_selectable()
+	settings_button.disabled = false
+	sort_button.disabled = false
+	help_button.disabled = false
+	play_button.disabled = false
+	if is_instance_valid(_tut_dim):
+		var d = _tut_dim
+		var t = create_tween()
+		t.tween_property(d, "color:a", 0.0, 0.3)
+		t.tween_callback(func():
+			if is_instance_valid(d):
+				d.queue_free())
+		_tut_dim = null
+	_tut_show_bubble(String(step["text"]))
+	_tut_fade_bubble_later(4.5)
+	_refresh_hand()     # resume the normal loop (player is on lead)
+	_update_status()
+
+
+func _tut_fade_bubble_later(secs: float) -> void:
+	await get_tree().create_timer(secs).timeout
+	if is_instance_valid(_tut_bubble):
+		var b = _tut_bubble
+		var t = b.create_tween()
+		t.tween_property(b, "modulate:a", 0.0, 0.4)
+		t.tween_callback(b.queue_free)
+
+
+func _show_tutorial_end() -> void:
+	# The tutorial counts as done whether won or lost (or replayed).
+	Settings.tutorial_completed = true
+	Settings.save_settings()
+	var won = game_manager.winner != null and game_manager.winner.id == 0
+
+	var overlay = Control.new()
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	overlay.z_index = 135
+	add_child(overlay)
+	UIFactory.fill_viewport(overlay)
+
+	var dim = ColorRect.new()
+	dim.color = Color(0, 0, 0, 0.6)
+	dim.mouse_filter = Control.MOUSE_FILTER_STOP
+	overlay.add_child(dim)
+	UIFactory.fill_viewport(dim)
+
+	var panel = Panel.new()
+	panel.add_theme_stylebox_override("panel",
+			UIFactory.flat_style(ThemeManager.get_color("panel_bg"), 16))
+	panel.size = Vector2(480, 250)
+	panel.position = get_viewport_rect().size / 2 - panel.size / 2
+	overlay.add_child(panel)
+
+	var title = UIFactory.make_label("Tutorial Complete! 🎉", 24,
+			ThemeManager.get_color("status_color"), Vector2(0, 24))
+	title.size = Vector2(panel.size.x, 30)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	panel.add_child(title)
+
+	var body = UIFactory.make_label(
+			TutorialManager.END_WIN if won else TutorialManager.END_LOSE, 13,
+			ThemeManager.get_color("text_soft"))
+	body.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	body.offset_left = 30
+	body.offset_top = 66
+	body.offset_right = -30
+	body.offset_bottom = -84
+	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	body.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	panel.add_child(body)
+
+	_story_end_button(panel, "Replay", Vector2(56, 188), _replay_tutorial)
+	_story_end_button(panel, "▸  Main menu", Vector2(264, 188), _tut_to_menu)
+
+
+func _replay_tutorial() -> void:
+	GameSession.mode = GameSession.Mode.TUTORIAL
+	_on_play_again_pressed()
+
+
+func _tut_to_menu() -> void:
+	TransitionManager.change_scene("res://MainMenu.tscn")
 
 
 # =============================================================

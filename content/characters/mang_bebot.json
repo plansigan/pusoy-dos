@@ -1,7 +1,7 @@
 {
   "id": "mang_bebot",
   "display_name": "Mang Bebot",
-  "title": "May-ari ng Listahan",
+  "title": "Keeper of the List",
   "portraits": {
     "neutral": "res://art/characters/mang_bebot/neutral.png",
     "smug": "res://art/characters/mang_bebot/smug.png",
@@ -12,37 +12,37 @@
   "theme_color": "diamonds",
   "ai": { "difficulty": "medium", "personality": "calculating", "quirks": ["listahan"] },
   "emote_pool": ["😏", "📓", "💰", "🤔"],
-  "bio": "Owns the corner sari-sari store — and the barangay's debts. Everything you owe is in the listahan.",
+  "bio": "Owns the corner sari-sari store, and the barangay's debts. Whatever you owe goes straight into the ledger.",
   "barks": {
     "player_low_cards": [
-      "Konti na lang cards mo. Isusulat ko na sa listahan ang panalo mo?",
-      "Malapit ka na—pero ang utang, mas malapit.",
-      "Bilis mo ah. Parang tingi ng yosi, ubos agad."
+      "Only a few cards left. Should I log your win in the ledger?",
+      "You're getting close. Your tab is closer.",
+      "Quick, ha. You sell out faster than loose candy."
     ],
     "self_low_cards": [
-      "Konti na lang, tulad ng tira kong yosi—tingi na lang.",
-      "Malapit na 'ko. Bayad na bago magsara ang tindahan.",
-      "Isang baraha, tapos balanse na ang libro ko."
+      "Almost out, like my last few sticks on the shelf.",
+      "Almost done here. Settle up before the store closes.",
+      "One card, then my books are balanced."
     ],
     "self_winning_soon": [
-      "Isa na lang! Sarado na—wala nang tingi.",
-      "Panalo. Idadagdag ko 'to sa records, may petsa.",
-      "Isang card na lang, tapos bayad ka sa 'kin."
+      "Just one! Closing time, no more sales.",
+      "A win. I'll write this in the records, with a date.",
+      "One card left, then you pay up."
     ],
     "got_ipit": [
-      "Uy! Inipit mo ako parang barya na kulang!",
-      "Ganyan? Nasa listahan ka na—may utang na loob ka sa 'kin.",
-      "Hoy—walang diskwento sa ganyang gawain, bata."
+      "Hey! You blocked me like a coin that came up short!",
+      "Oh, really? You're in the ledger now. You owe me one.",
+      "Hoy. No discounts for moves like that, kid."
     ],
     "table_cleared": [
-      "Linis ang mesa. Parang bagong deliver ng noodles.",
-      "Wala nang natira. Restock tayo.",
-      "Bagong stock, bagong pahina sa listahan."
+      "Table's clean. Like a fresh noodle delivery.",
+      "Nothing left. Time to restock.",
+      "New stock, new page in the ledger."
     ],
     "played_big_combo": [
-      "Five cards—suki discount 'to!",
-      "Combo! Presyong mataas, walang tawad.",
-      "Lima. Isusulat ko 'yan—premium item."
+      "Five cards. Suki discount on this one!",
+      "Combo! Premium price, no haggling.",
+      "Five. I'm logging that as a premium item."
     ]
   }
 }

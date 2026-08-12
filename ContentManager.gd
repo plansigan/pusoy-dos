@@ -14,6 +14,7 @@ const CHARACTERS_DIR = "res://content/characters"
 const STORIES_DIR = "res://content/stories"
 const PUZZLES_DIR = "res://content/puzzles"
 const ACHIEVEMENTS_DIR = "res://content/achievements"
+const TUTORIAL_PATH = "res://content/tutorial/tutorial_match.json"
 
 const ALLOWED_THEME_KEYS = ["clubs", "diamonds", "hearts", "spades"]
 const DIFFICULTY_MAP = {
@@ -29,6 +30,7 @@ static var puzzles: Dictionary = {}        # id -> validated puzzle dict
 static var puzzles_ordered: Array = []     # puzzles sorted by order
 static var achievements: Dictionary = {}   # id -> validated achievement dict
 static var achievements_ordered: Array = []
+static var tutorial: Dictionary = {}       # the guided-match layout (deal + seats)
 static var load_errors: Array = []         # human-readable problems
 
 static var _loaded: bool = false
@@ -52,6 +54,7 @@ static func reload() -> void:
 	puzzles_ordered.clear()
 	achievements.clear()
 	achievements_ordered.clear()
+	tutorial.clear()
 	load_errors.clear()
 	_loaded = true
 
@@ -86,6 +89,8 @@ static func reload() -> void:
 		var achievement = _validate_achievement(data, filename)
 		if achievement != null:
 			achievements[achievement["id"]] = achievement
+
+	_load_tutorial()
 
 	chapters_ordered = chapters.values()
 	chapters_ordered.sort_custom(func(a, b): return a["chapter_number"] < b["chapter_number"])
@@ -201,6 +206,26 @@ static func _validate_deal(deal) -> String:
 	return ""
 
 
+# The tutorial's fixed layout. Validated like a puzzle deal; a bad file
+# leaves tutorial empty (the tutorial then falls back to a normal shuffle).
+static func _load_tutorial() -> void:
+	if not FileAccess.file_exists(TUTORIAL_PATH):
+		load_errors.append("tutorial_match.json: file not found")
+		return
+	var data = _parse_file(TUTORIAL_PATH, "tutorial_match.json")
+	if data == null:
+		return
+	if data.get("deal", null) == null:
+		load_errors.append("tutorial_match.json: requires a 'deal'")
+		return
+	var deal_error = _validate_deal(data["deal"])
+	if not deal_error.is_empty():
+		load_errors.append("tutorial_match.json: %s" % deal_error)
+		return
+	data["seats"] = data.get("seats", {})
+	tutorial = data
+
+
 # =============================================================
 # ACCESSORS
 # =============================================================
@@ -244,6 +269,11 @@ static func _validate_achievement(data: Dictionary, filename: String):
 	data["hidden"] = bool(data.get("hidden", false))
 	data["order"] = int(data.get("order", 999))
 	return data
+
+
+static func get_tutorial() -> Dictionary:
+	load_all()
+	return tutorial
 
 
 static func get_puzzle(id: String) -> Dictionary:

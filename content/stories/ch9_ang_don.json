@@ -1,8 +1,8 @@
 {
   "id": "ch9_ang_don",
   "chapter_number": 9,
-  "title": "Ang Don",
-  "subtitle": "Para sa 1987",
+  "title": "The Don",
+  "subtitle": "For 1987",
   "unlock": { "requires_chapter": "ch8_rematch", "requires_rank": 2 },
   "seats": {
     "rival": "the_don",
@@ -13,33 +13,33 @@
   "scenes": {
     "intro": [
       { "narration": "A warehouse at the edge of the barangay. No light but a single bulb over the table. The man who has never lost is already seated." },
-      { "speaker": "the_don", "emotion": "neutral", "text": "Kumusta. Matagal-tagal din bago may umakyat hanggang dito. Umupo ka." },
-      { "speaker": "lolo_carding", "emotion": "neutral", "text": "...Ikaw pa rin. Hindi ka tumatanda, matanda." },
-      { "speaker": "the_don", "emotion": "smug", "text": "Carding. Tatlumpu't pitong taon. Akala ko ba hindi ka na babalik sa mesang 'to?" },
-      { "speaker": "lolo_carding", "emotion": "angry", "text": "Hindi ako ang bumalik. Ang apo ko. At ngayon, kakampi ko siya." },
-      { "speaker": "ate_marites", "emotion": "shocked", "text": "Teka teka—ITO 'yung 1987?! Ito 'yung dahilan ng 'unbeaten since 1987'?! Buhay na alamat sa harap ko!" },
-      { "speaker": "the_don", "emotion": "neutral", "text": "1987. Tinaya ni Carding ang bahay niya sa 'kin. Natalo siya. Hindi na siya naglaro sa 'kin ulit—hanggang ngayon." },
-      { "speaker": "lolo_carding", "emotion": "smug", "text": "Natalo mo 'ko noon. Hindi ang apo ko." },
+      { "speaker": "the_don", "emotion": "neutral", "text": "Hello. It has been a long time since anyone climbed all the way up here. Sit." },
+      { "speaker": "lolo_carding", "emotion": "neutral", "text": "...Still you. You never age, old man." },
+      { "speaker": "the_don", "emotion": "smug", "text": "Carding. Thirty-seven years. I thought you would never come back to this table." },
+      { "speaker": "lolo_carding", "emotion": "angry", "text": "I'm not the one who came back. My apo did. And this time, I'm on their side." },
+      { "speaker": "ate_marites", "emotion": "shocked", "text": "Wait, wait, THIS is the 1987?! This is the reason for 'unbeaten since 1987'?! A living legend, right in front of me!" },
+      { "speaker": "the_don", "emotion": "neutral", "text": "1987. Carding bet his house against me. He lost. He never played me again, until now." },
+      { "speaker": "lolo_carding", "emotion": "smug", "text": "You beat me back then. You did not beat my apo." },
       { "pause": 1.0 },
-      { "speaker": "the_don", "emotion": "happy", "text": "Mabuti. Sa wakas, isang tunay na laban. Alam mo ba—sa mesang 'to, ang dyamante ang hari. Ang dalawa ng dyamante, ang korona." },
-      { "narration": "The Don set an old key on the table — the key to the house Lolo lost in 1987." },
-      { "speaker": "the_don", "emotion": "smug", "text": "Panalo kayo ngayong gabi? Ibinabalik ko ang bahay. Talo? Mananatili ang alamat—at ang katahimikan ko." },
-      { "speaker": "lolo_carding", "emotion": "happy", "text": "Naririnig mo 'yan, apo? Ilabas mo ang tres. Tapusin natin ang sinimulan noong '87." },
+      { "speaker": "the_don", "emotion": "happy", "text": "Good. At last, a real match. And here, at this table, diamonds are king. The two of diamonds is the crown." },
+      { "narration": "The Don set an old key on the table, the key to the house Lolo lost in 1987." },
+      { "speaker": "the_don", "emotion": "smug", "text": "Win tonight, and I return the house. Lose, and the legend stands, along with my silence." },
+      { "speaker": "lolo_carding", "emotion": "happy", "text": "You hear that, apo? Put down the three. Let's finish what we started in '87." },
       { "speaker": "player", "text": "..." }
     ],
     "win": [
-      { "narration": "Your last card fell. For the first time in three decades, The Don was silent — and beaten." },
-      { "speaker": "the_don", "emotion": "shocked", "text": "...Ubos. Wala nang natira. Tatlumpu't pitong taon... at ngayon, tapos na." },
-      { "speaker": "lolo_carding", "emotion": "happy", "text": "HA! Nakita mo 'yan?! Nakita mo, matanda?! Ang apo ko—ANG APO KO!" },
-      { "speaker": "ate_marites", "emotion": "happy", "text": "NATALO ANG DON! WALANG NANALO SA KANYA MULA 1987! I-BROADCAST KO 'TO SA BUONG MUNDO!" },
-      { "speaker": "the_don", "emotion": "neutral", "text": "Kunin mo ang susi, bata. At ang titulo. Hindi ko na kailangan ang katahimikan—binigyan mo 'ko ng laban na hinintay ko nang matagal." },
-      { "speaker": "the_don", "emotion": "smug", "text": "Carding. Salamat sa apo mo. Ngayon lang ulit ako natalo... at masaya 'ko." },
-      { "speaker": "lolo_carding", "emotion": "neutral", "text": "...Salamat din, kaibigan. Nakalaya na tayong dalawa." }
+      { "narration": "Your last card fell. For the first time in three decades, The Don was silent, and beaten." },
+      { "speaker": "the_don", "emotion": "shocked", "text": "...Out. Nothing left. Thirty-seven years... and now it is over." },
+      { "speaker": "lolo_carding", "emotion": "happy", "text": "HA! Did you see that?! Did you see, old man?! My apo, MY APO!" },
+      { "speaker": "ate_marites", "emotion": "happy", "text": "THE DON IS BEATEN! NOBODY HAS WON AGAINST HIM SINCE 1987! I'M BROADCASTING THIS TO THE WHOLE WORLD!" },
+      { "speaker": "the_don", "emotion": "neutral", "text": "Take the key, kid. And the title. I no longer need the silence. You gave me the match I waited so long for." },
+      { "speaker": "the_don", "emotion": "smug", "text": "Carding. Thank you for your apo. This is the first time I have lost again... and I am glad." },
+      { "speaker": "lolo_carding", "emotion": "neutral", "text": "...Thank you too, my friend. We are both free now." }
     ],
     "lose": [
-      { "speaker": "the_don", "emotion": "neutral", "text": "Hindi pa. Tulad ni Carding noong 1987—malapit, ngunit hindi sapat." },
-      { "speaker": "lolo_carding", "emotion": "smug", "text": "'Wag kang malungkot, apo. Umabot ka sa mesang 'to. Ako, tatlumpu't pitong taon bago nakabalik." },
-      { "speaker": "the_don", "emotion": "happy", "text": "Balik ka. Naghihintay ako—matiyaga akong kalaban. Tanungin mo si Carding." }
+      { "speaker": "the_don", "emotion": "neutral", "text": "Not yet. Like Carding in 1987, close, but not enough." },
+      { "speaker": "lolo_carding", "emotion": "smug", "text": "Don't be sad, apo. You made it all the way to this table. It took me thirty-seven years to get back here." },
+      { "speaker": "the_don", "emotion": "happy", "text": "Come back. I will be waiting, I am a patient opponent. Ask Carding." }
     ]
   },
   "match_events": [
@@ -47,7 +47,7 @@
       "trigger": { "type": "rival_cards_left", "value": 3 },
       "once": true,
       "lines": [
-        { "speaker": "the_don", "emotion": "smug", "text": "Tatlo na lang 'ko. Tulad noong 1987... pero noon, ako ang nasa lugar mo." }
+        { "speaker": "the_don", "emotion": "smug", "text": "I'm down to three. Just like 1987... except back then, I was in your seat." }
       ],
       "actions": []
     },
@@ -55,8 +55,8 @@
       "trigger": { "type": "player_cards_left", "value": 1 },
       "once": true,
       "lines": [
-        { "speaker": "the_don", "emotion": "shocked", "text": "Isa na lang sa 'yo. Walang nakarating dito noon—kahit si Carding." },
-        { "speaker": "lolo_carding", "emotion": "happy", "text": "Sige apo! Para sa '87!" }
+        { "speaker": "the_don", "emotion": "shocked", "text": "Only one left for you. No one ever got this far before, not even Carding." },
+        { "speaker": "lolo_carding", "emotion": "happy", "text": "Go, apo! For '87!" }
       ],
       "actions": []
     }

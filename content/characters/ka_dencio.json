@@ -1,7 +1,7 @@
 {
   "id": "ka_dencio",
   "display_name": "Ka Dencio",
-  "title": "Hari ng Ruta",
+  "title": "King of the Route",
   "portraits": {
     "neutral": "res://art/characters/ka_dencio/neutral.png",
     "smug": "res://art/characters/ka_dencio/smug.png",
@@ -12,37 +12,37 @@
   "theme_color": "clubs",
   "ai": { "difficulty": "hard", "personality": "reckless", "quirks": ["tricycle driver"] },
   "emote_pool": ["😤", "🛺", "💨", "🤙"],
-  "bio": "Tricycle driver who plays as fast as he drives—no signal, no brakes, and walang barya.",
+  "bio": "Tricycle driver who plays as fast as he drives. No signal, no brakes, and never any change.",
   "barks": {
     "player_low_cards": [
-      "Konti na lang, malapit ka na sa hatinan—este, panalo.",
-      "Bilis mo ah, parang kabling sa kanto.",
-      "Sakay-sakay ka pa rin? Malapit ka nang bumaba, bata."
+      "Almost there, close to the split. I mean, the win.",
+      "Fast, ha. Like cutting across the corner.",
+      "Still riding along? You're about to get dropped off, kid."
     ],
     "self_low_cards": [
-      "Isang sakay na lang, byahe na 'ko.",
-      "Malapit na 'ko sa terminal, wag mo 'kong pigilan.",
-      "Huling ikot na 'to, andar pa rin."
+      "One more fare and I'm off.",
+      "Almost at the terminal. Don't stop me.",
+      "Last loop around, still running."
     ],
     "self_winning_soon": [
-      "Isa na lang! Full na, andar na 'to!",
-      "Panalo—bumaba na kayo, katapusan ng ruta.",
-      "Terminal na, wala nang balikan!"
+      "Just one! I'm full, let's roll!",
+      "A win. Everybody off, end of the route.",
+      "At the terminal now. No turning back!"
     ],
     "got_ipit": [
-      "Hoy! Sinindak mo 'ko parang counterflow!",
-      "Inipit?! Traffic violation 'yan, may hulihan!",
-      "Aray—biglang preno, wala man lang senyas!"
+      "Hoy! You cut me off like a counterflow!",
+      "Blocked me?! That's a traffic violation, kid!",
+      "Aray. Sudden brake, no signal at all!"
     ],
     "table_cleared": [
-      "Clear ang daan, andar!",
-      "Wala nang traffic, tuloy ang pasada.",
-      "Bagong ruta, bagong pasahero."
+      "Road's clear, let's go!",
+      "No traffic, keep it moving.",
+      "New route, new passenger."
     ],
     "played_big_combo": [
-      "Five cards, overloaded pero andar pa rin!",
-      "Combo! Parang singko passenger—sobra, pero kaya.",
-      "Lima! Puno ang trike, wala nang masasakay!"
+      "Five cards. Overloaded, but still running!",
+      "Combo! Like five passengers squeezed in. Too many, but it works.",
+      "Five! The trike's packed, no more room!"
     ]
   }
 }

@@ -58,6 +58,7 @@ func _build() -> void:
 	_build_sound_section()
 	_build_pixel_section()
 	_build_gameplay_section()
+	_build_replay_tutorial_button()
 	_build_back_button()
 
 
@@ -295,6 +296,25 @@ func _on_ranking_selected(value: int) -> void:
 # =============================================================
 # BACK
 # =============================================================
+
+func _build_replay_tutorial_button() -> void:
+	var btn = Button.new()
+	btn.text = "↺ Replay Tutorial"
+	btn.position = Vector2(40, 418)
+	btn.size = Vector2(196, 44)
+	btn.add_theme_font_size_override("font_size", 13)
+	UIFactory.style_button(btn, ThemeManager.get_color("button_bg"),
+			ThemeManager.get_color("border_soft"), ThemeManager.get_color("button_text"))
+	btn.pressed.connect(_on_replay_tutorial)
+	panel.add_child(btn)
+
+
+func _on_replay_tutorial() -> void:
+	# Works whether Settings was opened over the menu or a live game — the
+	# scene swap replaces whatever is underneath with a fresh tutorial match.
+	GameSession.mode = GameSession.Mode.TUTORIAL
+	TransitionManager.change_scene("res://GameTable.tscn")
+
 
 func _build_back_button() -> void:
 	var btn = Button.new()

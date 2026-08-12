@@ -24,9 +24,16 @@ static func style_button(btn: Button, bg: Color, border_color: Color, font_color
 			flat_style(bg.lightened(0.08), radius, border_width, border_color.lightened(0.15)))
 	btn.add_theme_stylebox_override("pressed",
 			flat_style(bg.darkened(0.12), radius, border_width, border_color))
+	# A styled disabled state so temporarily-disabled buttons read as dimmed
+	# rather than falling back to Godot's default dark box
+	btn.add_theme_stylebox_override("disabled",
+			flat_style(bg.darkened(0.06), radius, border_width, border_color.darkened(0.25)))
 	btn.add_theme_color_override("font_color", font_color)
 	btn.add_theme_color_override("font_hover_color", font_color)
 	btn.add_theme_color_override("font_pressed_color", font_color)
+	var dim_font = font_color
+	dim_font.a = 0.5
+	btn.add_theme_color_override("font_disabled_color", dim_font)
 	# Global press feedback: click sound + quick scale pop (see TransitionManager)
 	btn.pressed.connect(func():
 		SoundManager.play("button_click")

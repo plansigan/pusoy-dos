@@ -1,7 +1,7 @@
 {
   "id": "ch6_hotshot",
   "chapter_number": 6,
-  "title": "Ang Bagong Salta",
+  "title": "The New Kid",
   "subtitle": "Scripted Hands",
   "unlock": { "requires_chapter": "ch5_palengke", "requires_rank": null },
   "seats": {
@@ -18,28 +18,28 @@
   "scenes": {
     "intro": [
       { "narration": "Inside the computer shop. The fan hums, and so do everyone's nerves. JR still has his headset on." },
-      { "speaker": "jr_hotshot", "emotion": "smug", "text": "Sup. Ako si JR, rank one dito. Ikaw 'yung nag-uuphill sa story mode? Cute." },
-      { "speaker": "lolo_carding", "emotion": "neutral", "text": "Apo. Nandito lang ako. Panoorin ko kung ano'ng natutunan mo." },
-      { "speaker": "jr_hotshot", "emotion": "smug", "text": "Lolo?! Legend. Pero relax tito, di ko kailangan ng coaching—scripted ko na 'tong deal, GG agad." },
-      { "speaker": "lolo_carding", "emotion": "smug", "text": "Scripted? Sa panahon namin, tinatalo ka ng baraha, hindi ng dahilan." },
-      { "speaker": "jr_hotshot", "emotion": "happy", "text": "Boomer take, respect. Pero tignan mo—perfect hand ko, meta build." },
+      { "speaker": "jr_hotshot", "emotion": "smug", "text": "Sup. I'm JR, rank one here. You're the one grinding through story mode? Cute." },
+      { "speaker": "lolo_carding", "emotion": "neutral", "text": "Apo. I'm just here to watch what you've learned." },
+      { "speaker": "jr_hotshot", "emotion": "smug", "text": "Lolo?! Legend. But relax, tito, I don't need coaching. I scripted this deal, GG already." },
+      { "speaker": "lolo_carding", "emotion": "smug", "text": "Scripted? In our day, the cards did the beating. The excuses came later." },
+      { "speaker": "jr_hotshot", "emotion": "happy", "text": "Boomer take, respect. But look at this, perfect hand, meta build." },
       { "pause": 1.0 },
-      { "narration": "JR dealt the cards, grinning. You looked at your hand. Tres na kalburo — and two four-of-a-kinds." },
-      { "speaker": "jr_hotshot", "emotion": "shocked", "text": "Wait. Anong hawak mo? Teka, na-misdeal ba? Lag 'yon, di bilang!" },
-      { "speaker": "lolo_carding", "emotion": "happy", "text": "Hala. Mukhang na-nerf ka, apo mo pala 'yung may script." },
+      { "narration": "JR dealt the cards, grinning. You looked at your hand. The three of clubs, and two four-of-a-kinds." },
+      { "speaker": "jr_hotshot", "emotion": "shocked", "text": "Wait. What are you holding? Hold on, was that a misdeal? That's lag, doesn't count!" },
+      { "speaker": "lolo_carding", "emotion": "happy", "text": "Oh no. Looks like you got nerfed, and my apo here is holding the real script." },
       { "speaker": "player", "text": "..." },
-      { "speaker": "jr_hotshot", "emotion": "angry", "text": "Okay okay, tahimik na sweatlord, respect. Pero di pa tapos 'to—clutch pa 'ko." }
+      { "speaker": "jr_hotshot", "emotion": "angry", "text": "Okay okay, quiet sweatlord, respect. But this isn't over. I can still clutch." }
     ],
     "win": [
-      { "speaker": "jr_hotshot", "emotion": "shocked", "text": "Ubos ka na?! Impossible, may quads ka?! Rigged 'yan, report ko 'to sa admin!" },
-      { "speaker": "lolo_carding", "emotion": "happy", "text": "Walang admin sa hapag, iho. Meron lang manalo at matalo." },
-      { "narration": "JR pulled off his headset. For the first time, the whole shop was silent." },
-      { "speaker": "jr_hotshot", "emotion": "neutral", "text": "...okay. GG. Legit ka pala. Wala kang stream? Sayang, viral ka sana." }
+      { "speaker": "jr_hotshot", "emotion": "shocked", "text": "You're out?! Impossible, you had quads?! That's rigged, I'm reporting this to the admin!" },
+      { "speaker": "lolo_carding", "emotion": "happy", "text": "There's no admin at the table, apo. Only winners and losers." },
+      { "narration": "JR pulled off his headset. For the first time, the whole shop went silent." },
+      { "speaker": "jr_hotshot", "emotion": "neutral", "text": "...okay. GG. You're legit. You don't stream? Too bad, you'd go viral." }
     ],
     "lose": [
-      { "speaker": "jr_hotshot", "emotion": "smug", "text": "EZ! GG WP! I-clip niyo 'yan—diff talaga ang skill gap!" },
-      { "speaker": "lolo_carding", "emotion": "neutral", "text": "Hmp. Suwerte ang script minsan. Balik ka, apo." },
-      { "speaker": "jr_hotshot", "emotion": "happy", "text": "Rematch anytime, tito. Practice ka muna sa unranked, hehe." }
+      { "speaker": "jr_hotshot", "emotion": "smug", "text": "EZ! GG WP! Clip that, the skill gap is real!" },
+      { "speaker": "lolo_carding", "emotion": "neutral", "text": "Hmp. The script gets lucky sometimes. Come back, apo." },
+      { "speaker": "jr_hotshot", "emotion": "happy", "text": "Rematch anytime, tito. Practice in unranked first, hehe." }
     ]
   },
   "match_events": [
@@ -47,8 +47,8 @@
       "trigger": { "type": "player_played_combo", "value": "FOUR_OF_A_KIND" },
       "once": true,
       "lines": [
-        { "speaker": "jr_hotshot", "emotion": "shocked", "text": "FOUR OF A KIND?! Anong build 'yan?! Di 'yan nasa meta!" },
-        { "speaker": "lolo_carding", "emotion": "happy", "text": "Nasa meta 'yan noong 1987 pa, iho." }
+        { "speaker": "jr_hotshot", "emotion": "shocked", "text": "FOUR OF A KIND?! What build is that?! That's not even in the meta!" },
+        { "speaker": "lolo_carding", "emotion": "happy", "text": "It was in the meta back in 1987, apo." }
       ],
       "actions": []
     },
@@ -56,7 +56,7 @@
       "trigger": { "type": "table_cleared_count", "value": 2 },
       "once": true,
       "lines": [
-        { "speaker": "jr_hotshot", "emotion": "angry", "text": "Clear ulit? Lag server 'to, di 'to skill niyo!" }
+        { "speaker": "jr_hotshot", "emotion": "angry", "text": "Cleared again? That's server lag. No way that's skill." }
       ],
       "actions": []
     }

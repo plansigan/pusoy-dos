@@ -1,0 +1,16 @@
+{
+  "id": "pz_2trap",
+  "title": "The 2 Is a Trap",
+  "description": "The 2 of diamonds begs to be shown off. Spend it wrong and you'll run out of turns.",
+  "order": 3,
+  "difficulty": "medium",
+  "ai": { "difficulty": "medium" },
+  "objective": { "type": "win_in", "value": 3 },
+  "unlock": { "requires_puzzle": "pz_bullets" },
+  "deal": {
+    "player": ["3C","4C","5C","6C","7C","KC","KD","KH","KS","2D","9D","9H","9S"],
+    "rival":  ["3D","4H","5S","6D","7H","8C","8D","9C","10H","JS","QC","QD","AH"],
+    "seat3":  ["3H","4S","5D","6H","7S","8H","10C","10D","JC","JD","AC","AD","2C"],
+    "seat4":  ["3S","4D","5H","6S","7D","8S","10S","JH","QS","AS","2S","2H","QH"]
+  }
+}
